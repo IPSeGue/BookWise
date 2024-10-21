@@ -1,4 +1,4 @@
-package com.mobdeve.bookwise
+package com.mobdeve.s12.bookwise
 
 import org.junit.Test
 

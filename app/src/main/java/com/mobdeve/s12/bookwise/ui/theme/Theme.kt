@@ -1,4 +1,4 @@
-package com.mobdeve.bookwise.ui.theme
+package com.mobdeve.s12.bookwise.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -34,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun BookWiseTheme(
+fun BookwiseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,

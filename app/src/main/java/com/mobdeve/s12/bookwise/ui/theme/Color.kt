@@ -1,4 +1,4 @@
-package com.mobdeve.bookwise.ui.theme
+package com.mobdeve.s12.bookwise.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

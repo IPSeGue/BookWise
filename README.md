@@ -1,2 +1,0 @@
-# BookWise
- MCO of MOBDEVE

@@ -10,13 +10,22 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BookWise"
+        android:theme="@style/Theme.Bookwise"
         tools:targetApi="31">
+        <activity
+            android:name=".ForgotPassActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.BookWise">
+            android:theme="@style/Theme.Bookwise">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
