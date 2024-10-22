@@ -31,7 +31,7 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bookitem book = bookitemList.get(position);
         holder.h_ActivityImage.setImageResource(book.getImageID());
-        holder.h_ActivityTitle.setText(book.getTitle());
+        holder.h_ActivityTitle.setText("By:" + book.getTitle());
         holder.h_ActivityAuthor.setText(book.getAuthor());
         holder.h_ActivityRating.setRating(book.getRating());
     }
