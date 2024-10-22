@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/l_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#4CAF50"
@@ -11,21 +11,23 @@
     tools:context=".LoginActivity">
 
     <EditText
-        android:id="@+id/userName"
+        android:id="@+id/l_email_Input"
         android:layout_width="270dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:autofillHints=""
         android:background="#F6F6F6"
         android:focusable="true"
-        android:hint="Username"
+        android:hint="Email"
         android:inputType="text"
         android:minHeight="48dp"
         android:padding="10dp" />
 
     <EditText
-        android:id="@+id/passWord"
+        android:id="@+id/l_passWord"
         android:layout_width="270dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:autofillHints=""
         android:background="#FFFFFF"
         android:drawableRight="@android:drawable/ic_menu_view"
@@ -37,6 +39,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -44,26 +47,30 @@
             android:id="@+id/view_text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingEnd="5dp"
             android:text="Don’t have account?" />
 
         <TextView
-            android:id="@+id/signUp"
+            android:id="@+id/l_signUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:text="Sign Up" />
+            android:text="Sign Up"
+            android:textColor="#0011FF" />
 
         <TextView
-            android:id="@+id/forgotPass"
+            android:id="@+id/l_forgotPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Forgot Password" />
+            android:text="Forgot Password"
+            android:textColor="#0011FF" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/logIn"
+        android:id="@+id/l_logIn"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="#040404"
         android:text="Log In" />
 
@@ -71,17 +78,19 @@
         android:id="@+id/view_text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
         android:text="Login using social media to get quick access" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/facebook"
+            android:id="@+id/l_facebook"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:contentDescription="TODO"
@@ -89,7 +98,7 @@
             app:srcCompat="@drawable/facebook" />
 
         <ImageButton
-            android:id="@+id/google"
+            android:id="@+id/l_google"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:contentDescription="TODO"
@@ -97,7 +106,7 @@
             app:srcCompat="@drawable/google" />
 
         <ImageButton
-            android:id="@+id/x"
+            android:id="@+id/l_x"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:contentDescription="TODO"

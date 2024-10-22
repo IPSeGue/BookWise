@@ -6,20 +6,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogIn;
-    private TextView btnSignUp, btnForgotPass, userName, passWord;
+    private TextView btnSignUp, btnForgotPass;
+    private EditText emailInput, passWord;
     private ImageButton facebook, goolge, x;
 
     @Override
@@ -27,38 +25,43 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        btnLogIn = findViewById(R.id.logIn);
-        btnSignUp = findViewById(R.id.signUp);
-        btnForgotPass = findViewById(R.id.forgotPass);
-        userName = findViewById(R.id.userName);
-        passWord = findViewById(R.id.passWord);
-        facebook = findViewById(R.id.facebook);
-        goolge = findViewById(R.id.google);
-        x = findViewById(R.id.x);
+        initViews();
+        btnLogIn.setOnClickListener(v -> logIn());
+        btnSignUp.setOnClickListener(v -> signUpPage());
+        btnForgotPass.setOnClickListener(v -> forgotPassPage());
 
-        userName.setOnClickListener(new View.OnClickListener() {
+        emailInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userName.requestFocus();
+                emailInput.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
-                    imm.showSoftInput(userName, InputMethodManager.SHOW_IMPLICIT);
+                    imm.showSoftInput(emailInput, InputMethodManager.SHOW_IMPLICIT);
                 }
             }
         });
+    }
+    public void initViews(){
+        btnLogIn = findViewById(R.id.l_logIn);
+        btnSignUp = findViewById(R.id.l_signUp);
+        btnForgotPass = findViewById(R.id.l_forgotPass);
+        emailInput = findViewById(R.id.l_email_Input);
+        passWord = findViewById(R.id.l_passWord);
+        facebook = findViewById(R.id.l_facebook);
+        goolge = findViewById(R.id.l_google);
+        x = findViewById(R.id.l_x);
+    }
 
-        btnLogIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = userName.getText().toString().trim();
-                String password = passWord.getText().toString().trim();
+    public void logIn(){
+        String email = emailInput.getText().toString().trim();
+        String password = passWord.getText().toString().trim();
 
-                if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Replace with your actual credential check logic
-                    if (email.equals("123") && password.equals("pw")) {
-                        Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(LoginActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
+        } else {
+            // Replace with your actual credential check logic
+            if (email.equals("123") && password.equals("pw")) {
+                Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
 
 //                        if (rememberMeCheckbox.isChecked()) {
 //                            saveRememberMe(email, password);
@@ -66,35 +69,26 @@ public class LoginActivity extends AppCompatActivity {
 //                            clearRememberMe();
 //                        }
 
-                        // Change this line to redirect to StepCounterActivity
-                        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                // Change this line to redirect to StepCounterActivity
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
-                overridePendingTransition(0, 0);
+                finish();
+            } else {
+                Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
             }
-        });
+        }
+    }
 
-        btnForgotPass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    public void signUpPage(){
+        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
 
-                Intent intent = new Intent(LoginActivity.this, ForgotPassActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            }
-        });
+    public void forgotPassPage(){
+        Intent intent = new Intent(LoginActivity.this, ForgotPassActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
 //    private void checkRememberMe() {
