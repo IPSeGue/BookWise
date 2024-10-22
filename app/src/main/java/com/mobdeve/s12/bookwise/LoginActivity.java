@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 //                        }
 
                 // Change this line to redirect to StepCounterActivity
-                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
                 finish();
             } else {
