@@ -1,40 +1,26 @@
 package com.mobdeve.s12.bookwise
 
-import android.media.Image
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 
+class MainActivity : AppCompatActivity() {
 
-class MainActivity : ComponentActivity() {
-
-    private lateinit var btnLogIn: Button
-    private lateinit var btnSignUp: TextView
-    private lateinit var btnForgotPass: TextView
-    private lateinit var userName: EditText
-    private lateinit var passWord: EditText
-    private lateinit var facebook: ImageButton
-    private lateinit var google: ImageButton
-    private lateinit var x: ImageButton
+    private lateinit var btnStart: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login);
-        initializeUI()
+        setContentView(R.layout.activity_main)
 
-    }
-    private fun initializeUI(){
-        btnLogIn = findViewById(R.id.logIn)
-        btnSignUp = findViewById(R.id.signUp)
-        btnForgotPass = findViewById(R.id.forgotPass)
-        userName = findViewById(R.id.userName)
-        passWord = findViewById(R.id.passWord)
-        facebook = findViewById(R.id.facebook)
-        google = findViewById(R.id.google)
-        x = findViewById(R.id.x)
+        btnStart = findViewById(R.id.Start)
+
+        // Set up onClickListeners using lambda expressions
+        btnStart.setOnClickListener { onSignIn() }
     }
 
+    private fun onSignIn() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+    }
 }
