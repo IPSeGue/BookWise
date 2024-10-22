@@ -78,7 +78,7 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
     }
 
     public void searchPage(){
-        Intent intent = new Intent(HomeActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(HomeActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

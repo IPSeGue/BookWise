@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Bookwise"
         tools:targetApi="31">
         <activity
+            android:name=".SearchActivity"
+            android:exported="true" />
+        <activity
             android:name=".UserSettingActivity"
             android:exported="true" />
         <activity

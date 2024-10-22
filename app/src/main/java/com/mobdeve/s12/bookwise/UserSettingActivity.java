@@ -58,7 +58,7 @@ public class UserSettingActivity extends AppCompatActivity {
     }
 
     public void searchPage(){
-        Intent intent = new Intent(UserSettingActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(UserSettingActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

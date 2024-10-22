@@ -58,7 +58,7 @@ public class GoalSettingActivity extends AppCompatActivity {
     }
 
     public void searchPage(){
-        Intent intent = new Intent(GoalSettingActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(GoalSettingActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

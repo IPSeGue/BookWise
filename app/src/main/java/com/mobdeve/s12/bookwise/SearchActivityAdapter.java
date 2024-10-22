@@ -1,6 +1,5 @@
 package com.mobdeve.s12.bookwise;
 
-import android.graphics.ColorSpace;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapter.ViewHolder>{
+public class SearchActivityAdapter extends RecyclerView.Adapter<SearchActivityAdapter.ViewHolder>{
 
     private List<Bookitem> bookitemList;
     private OnCollectClickListener collectClickListener;
 
-    public HomeActivityAdapter(List<Bookitem> bookitemList, OnCollectClickListener collectClickListener) {
+    public SearchActivityAdapter(List<Bookitem> bookitemList, OnCollectClickListener collectClickListener) {
         this.bookitemList = bookitemList;
         this.collectClickListener = collectClickListener;
     }
@@ -27,17 +26,19 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_home_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_search_item, parent, false);
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bookitem book = bookitemList.get(position);
-        holder.h_ActivityImage.setImageResource(book.getImageID());
-        holder.h_ActivityTitle.setText(book.getTitle());
-        holder.h_ActivityAuthor.setText("By: " + book.getAuthor());
-        holder.h_ActivityRating.setRating(book.getRating());
+        holder.ActivityImage.setImageResource(book.getImageID());
+        holder.ActivityTitle.setText(book.getTitle());
+        holder.ActivityAuthor.setText("By: " + book.getAuthor());
+        holder.ActivityGenres.setText("Genres: \n" + book.getGenres());
+        holder.ActivityDate.setText("Published: \n" + book.getDate());
         holder.bindData(book, collectClickListener);
     }
 
@@ -47,30 +48,30 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView h_ActivityImage;
-        TextView h_ActivityTitle, h_ActivityAuthor;
-        RatingBar h_ActivityRating;
-        ToggleButton h_CollectButton;
+        ImageView ActivityImage;
+        TextView ActivityTitle, ActivityAuthor, ActivityGenres, ActivityDate;
+        ToggleButton CollectButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            h_ActivityImage = itemView.findViewById(R.id.hi_image);
-            h_ActivityTitle = itemView.findViewById(R.id.hi_title);
-            h_ActivityAuthor = itemView.findViewById(R.id.hi_author);
-            h_ActivityRating = itemView.findViewById(R.id.hi_rating);
-            h_CollectButton = itemView.findViewById(R.id.hi_collect);
+            ActivityImage = itemView.findViewById(R.id.si_image);
+            ActivityTitle = itemView.findViewById(R.id.si_title);
+            ActivityAuthor = itemView.findViewById(R.id.si_author);
+            ActivityGenres = itemView.findViewById(R.id.si_genres);
+            ActivityDate = itemView.findViewById(R.id.si_publish);
+            CollectButton = itemView.findViewById(R.id.si_collect);
         }
-
         public void bindData(Bookitem book, OnCollectClickListener collectClickListener) {
-            h_ActivityTitle.setText(book.getTitle());
-            h_ActivityAuthor.setText(book.getAuthor());
-            h_ActivityRating.setRating(book.getRating());
+            ActivityTitle.setText(book.getTitle());
+            ActivityTitle.setText(book.getAuthor());
+            ActivityGenres.setText(book.getGenres());
+            ActivityDate.setText(book.getDate());
 
             // Set the toggle button status based on whether the item is collected or not
-            h_CollectButton.setChecked(book.isCollected());
+            CollectButton.setChecked(book.isCollected());
 
             // ToggleButton click listener to mark the item as collected
-            h_CollectButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            CollectButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 collectClickListener.onCollectClick(getAdapterPosition(), isChecked);
             });
         }

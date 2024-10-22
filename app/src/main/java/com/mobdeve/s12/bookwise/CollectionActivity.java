@@ -67,7 +67,7 @@ public class CollectionActivity extends AppCompatActivity {
     }
 
     public void searchPage(){
-        Intent intent = new Intent(CollectionActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
