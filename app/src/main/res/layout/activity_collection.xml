@@ -2,12 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/h_main"
+    android:id="@+id/c_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".HomeActivity">
-
+    tools:context=".CollectionActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -32,12 +31,11 @@
             android:backgroundTint="#000000"
             android:backgroundTintMode="add" />
     </LinearLayout>
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Recent" />
+        android:text="My Collection" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_home_item"

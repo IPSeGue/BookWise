@@ -4,41 +4,42 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements OnCollectClickListener {
+public class CollectionActivity extends AppCompatActivity {
 
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private ImageView userProfile;
     private RecyclerView rv_home_item;
 
     private HomeActivityAdapter activityHomeAdaptor;
-    private List<Bookitem> bookitemList;
-    private List<Bookitem> collectionBookitemList;
+    private ArrayList<Bookitem> collectedItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_collection);
 
         // Initialize RecyclerView
         initViews();
         rv_home_item.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize data
-        bookitemList = new ArrayList<>();
-        collectionBookitemList = new ArrayList<>();
-        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, R.drawable.google));
-        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
-        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, R.drawable.x));
+
+        collectedItems = getIntent().getParcelableArrayListExtra("collectedItems");
+
 
         // Set Adapter
-        activityHomeAdaptor = new HomeActivityAdapter(bookitemList, this);
+        activityHomeAdaptor = new HomeActivityAdapter(collectedItems, null);
         rv_home_item.setAdapter(activityHomeAdaptor);
 
 
@@ -49,18 +50,6 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
         btnGoal.setOnClickListener(v -> goalPage());
         userProfile.setOnClickListener(v -> userProfilePage());
     }
-
-    public void onCollectClick(int position, boolean isCollected) {
-        Bookitem item = bookitemList.get(position);
-        item.setCollected(isCollected);  // Update the collected status in the model
-
-        if (isCollected) {
-            collectionBookitemList.add(item);  // Add to collected list
-        } else {
-            collectionBookitemList.remove(item);  // Remove from collected list
-        }
-    }
-
     public void initViews(){
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
@@ -72,38 +61,37 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
     }
 
     public void homePage(){
-        Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, HomeActivity.class);
         startActivity(intent);
-        overridePendingTransition(0, 0);
+        finish();
     }
 
     public void searchPage(){
-        Intent intent = new Intent(HomeActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, ForgotPassActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void addPage(){
-        Intent intent = new Intent(HomeActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, ForgotPassActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void collectionPage(){
-        Intent intent = new Intent(HomeActivity.this, CollectionActivity.class);
-        intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
+        Intent intent = new Intent(CollectionActivity.this, CollectionActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void goalPage(){
-        Intent intent = new Intent(HomeActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, ForgotPassActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void userProfilePage(){
-        Intent intent = new Intent(HomeActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, ForgotPassActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
