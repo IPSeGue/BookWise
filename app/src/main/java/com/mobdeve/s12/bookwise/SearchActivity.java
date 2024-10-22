@@ -2,6 +2,7 @@ package com.mobdeve.s12.bookwise;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -20,6 +21,7 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
 
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private RecyclerView rv_search_item;
+    private Button btnAdvance;
 
     private SearchActivityAdapter activitySearchAdapter;
     private List<Bookitem> bookitemList;
@@ -71,6 +73,7 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
         rv_search_item = findViewById(R.id.rv_search_item);
+        btnAdvance = findViewById(R.id.s_advance);
     }
 
     public void homePage(){
