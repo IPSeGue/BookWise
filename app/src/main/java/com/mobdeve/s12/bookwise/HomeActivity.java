@@ -97,13 +97,13 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
     }
 
     public void goalPage(){
-        Intent intent = new Intent(HomeActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(HomeActivity.this, GoalSettingActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void userProfilePage(){
-        Intent intent = new Intent(HomeActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
