@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,9 +37,23 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
         Bookitem book = bookitemList.get(position);
         holder.h_ActivityImage.setImageResource(book.getImageID());
         holder.h_ActivityTitle.setText(book.getTitle());
-        holder.h_ActivityAuthor.setText("By: " + book.getAuthor());
+        holder.h_ActivityAuthor.setText("By: "+ book.getAuthor());
         holder.h_ActivityRating.setRating(book.getRating());
         holder.bindData(book, collectClickListener);
+
+        holder.itemView.setOnClickListener(v -> {
+            // Create an Intent to start BookDetailActivity
+            Intent intent = new Intent(v.getContext(), BookDetailActivity.class);
+            // Pass the book details to the intent
+            intent.putExtra("title", book.getTitle());
+            intent.putExtra("author", book.getAuthor());
+            intent.putExtra("genres", book.getGenres());
+            intent.putExtra("summary", book.getSummary());
+            intent.putExtra("date", book.getDate());
+            intent.putExtra("imageID", book.getImageID());
+            // Start the activity
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

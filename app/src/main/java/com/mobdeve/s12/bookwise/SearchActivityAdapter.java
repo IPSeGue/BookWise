@@ -36,9 +36,9 @@ public class SearchActivityAdapter extends RecyclerView.Adapter<SearchActivityAd
         Bookitem book = bookitemList.get(position);
         holder.ActivityImage.setImageResource(book.getImageID());
         holder.ActivityTitle.setText(book.getTitle());
-        holder.ActivityAuthor.setText("By: " + book.getAuthor());
-        holder.ActivityGenres.setText("Genres: \n" + book.getGenres());
-        holder.ActivityDate.setText("Published: \n" + book.getDate());
+        holder.ActivityAuthor.setText("By: "+ book.getAuthor());
+        holder.ActivityGenres.setText("Genres: \n"+ book.getGenres());
+        holder.ActivityDate.setText("Published: \n"+ book.getDate());
         holder.bindData(book, collectClickListener);
     }
 
