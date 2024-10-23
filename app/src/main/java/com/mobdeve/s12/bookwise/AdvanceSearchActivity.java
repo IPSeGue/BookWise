@@ -3,7 +3,6 @@ package com.mobdeve.s12.bookwise;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
@@ -17,11 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements OnCollectClickListener{
+public class AdvanceSearchActivity extends AppCompatActivity {
 
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
-    private RecyclerView rv_search_item;
-    private Button btnAdvance;
+    private Button btnNormalSearch;
 
     private SearchActivityAdapter activitySearchAdapter;
     private List<Bookitem> bookitemList;
@@ -30,22 +28,12 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_advance_search);
 
         // Initialize RecyclerView
         initViews();
-        rv_search_item.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize data
-        bookitemList = new ArrayList<>();
         collectionBookitemList = new ArrayList<>();
-        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, R.drawable.google));
-        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
-        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, R.drawable.x));
-
-        // Set Adapter
-        activitySearchAdapter = new SearchActivityAdapter(bookitemList, this);
-        rv_search_item.setAdapter(activitySearchAdapter);
 
 
         btnHome.setOnClickListener(v -> homePage());
@@ -53,7 +41,7 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
         btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
-        btnAdvance.setOnClickListener(v -> advanceSearch());
+        btnNormalSearch.setOnClickListener(v -> normalSearch());
     }
 
     public void onCollectClick(int position, boolean isCollected) {
@@ -73,43 +61,42 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
         btnAdd = findViewById(R.id.h_add_btn);
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
-        rv_search_item = findViewById(R.id.rv_search_item);
-        btnAdvance = findViewById(R.id.s_advance);
+        btnNormalSearch = findViewById(R.id.as_search);
     }
 
     public void homePage(){
-        Intent intent = new Intent(SearchActivity.this, HomeActivity.class);
+        Intent intent = new Intent(AdvanceSearchActivity.this, HomeActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void searchPage(){
-        Intent intent = new Intent(SearchActivity.this, SearchActivity.class);
+        Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void addPage(){
-        Intent intent = new Intent(SearchActivity.this, AdvanceSearchActivity.class);
+        Intent intent = new Intent(AdvanceSearchActivity.this, AdvanceSearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void collectionPage(){
-        Intent intent = new Intent(SearchActivity.this, CollectionActivity.class);
+        Intent intent = new Intent(AdvanceSearchActivity.this, CollectionActivity.class);
         intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
     public void goalPage(){
-        Intent intent = new Intent(SearchActivity.this, GoalSettingActivity.class);
+        Intent intent = new Intent(AdvanceSearchActivity.this, GoalSettingActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
-    public void advanceSearch(){
-        Intent intent = new Intent(SearchActivity.this, AdvanceSearchActivity.class);
+    public void normalSearch(){
+        Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

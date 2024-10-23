@@ -73,7 +73,7 @@ public class CollectionActivity extends AppCompatActivity {
     }
 
     public void addPage(){
-        Intent intent = new Intent(CollectionActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, AdvanceSearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

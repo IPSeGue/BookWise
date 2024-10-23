@@ -71,7 +71,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     public void addPage(){
-        Intent intent = new Intent(UserProfileActivity.this, ForgotPassActivity.class);
+        Intent intent = new Intent(UserProfileActivity.this, AdvanceSearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
