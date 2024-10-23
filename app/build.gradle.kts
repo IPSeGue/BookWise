@@ -53,6 +53,14 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    // Retrofit dependencies for API integration
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
+    // For image loading with Glide
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -11,6 +11,8 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class SearchActivityAdapter extends RecyclerView.Adapter<SearchActivityAdapter.ViewHolder>{
@@ -34,12 +36,17 @@ public class SearchActivityAdapter extends RecyclerView.Adapter<SearchActivityAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bookitem book = bookitemList.get(position);
-        holder.ActivityImage.setImageResource(book.getImageID());
         holder.ActivityTitle.setText(book.getTitle());
         holder.ActivityAuthor.setText("By: "+ book.getAuthor());
         holder.ActivityGenres.setText("Genres: \n"+ book.getGenres());
         holder.ActivityDate.setText("Published: \n"+ book.getDate());
         holder.bindData(book, collectClickListener);
+
+        Glide.with(holder.itemView.getContext())
+                .load(book.getImageURL())  // URL from the book item
+                .placeholder(R.drawable.google)  // Optional: show a placeholder while the image loads
+                .error(R.drawable.bookwise_logo)  // Optional: show this if there's an error loading the image
+                .into(holder.ActivityImage);
     }
 
     @Override

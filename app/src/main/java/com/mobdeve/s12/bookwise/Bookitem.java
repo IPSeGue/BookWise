@@ -3,13 +3,15 @@ package com.mobdeve.s12.bookwise;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Bookitem implements Parcelable {
-    private String title, author, genres, summary;
-    private int rating, day, month, year, imageID;
-    private boolean isCollected;
-    //private Review review;
+import java.util.ArrayList;
 
-    public Bookitem(String title, String author, String genres, String summary, int rating, int day, int month, int year, int imageID) {
+public class Bookitem implements Parcelable {
+    private String title, author, genres, summary, imageURL;
+    private int rating, day, month, year;
+    private boolean isCollected;
+    private ArrayList<Reviews> reviews;
+
+    public Bookitem(String title, String author, String genres, String summary, int rating, int day, int month, int year, String imageURL) {
         this.title = title;
         this.author = author;
         this.genres = genres;
@@ -18,9 +20,11 @@ public class Bookitem implements Parcelable {
         this.day = day;
         this.month = month;
         this.year = year;
-        this.imageID = imageID;
+        this.imageURL = imageURL;
         this.isCollected = false;
+        this.reviews = new ArrayList<>();
     }
+
     public boolean isCollected() {
         return isCollected;
     }
@@ -61,10 +65,30 @@ public class Bookitem implements Parcelable {
         return year;
     }
 
-    public int getImageID(){ return imageID; }
+    public String getImageURL(){
+        return imageURL;
+    }
 
     public String getDate() {
         return month + "/" + day + "/" + year;
+    }
+
+    public ArrayList<Reviews> getReviews() {
+        return reviews;
+    }
+
+    public void addReview(Reviews review) {
+        reviews.add(review);
+        // Optionally, recalculate the book's average rating based on reviews
+        calculateAverageRating();
+    }
+
+    private void calculateAverageRating() {
+        int totalRating = 0;
+        for (Reviews review : reviews) {
+            totalRating += review.getRating();
+        }
+        this.rating = reviews.size() > 0 ? totalRating / reviews.size() : 0;
     }
 
     // Parcelable implementation
@@ -77,7 +101,7 @@ public class Bookitem implements Parcelable {
         day = in.readInt();
         month = in.readInt();
         year = in.readInt();
-        imageID = in.readInt();
+        imageURL = in.readString();
         isCollected = in.readByte() != 0;
     }
 
@@ -108,7 +132,7 @@ public class Bookitem implements Parcelable {
         parcel.writeInt(day);
         parcel.writeInt(month);
         parcel.writeInt(year);
-        parcel.writeInt(imageID);
+        parcel.writeString(imageURL);
         parcel.writeByte((byte) (isCollected ? 1 : 0));
     }
 }

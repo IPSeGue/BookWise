@@ -13,6 +13,8 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapter.ViewHolder>{
@@ -35,11 +37,16 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bookitem book = bookitemList.get(position);
-        holder.h_ActivityImage.setImageResource(book.getImageID());
         holder.h_ActivityTitle.setText(book.getTitle());
         holder.h_ActivityAuthor.setText("By: "+ book.getAuthor());
         holder.h_ActivityRating.setRating(book.getRating());
         holder.bindData(book, collectClickListener);
+
+        Glide.with(holder.itemView.getContext())
+                .load(book.getImageURL())  // URL from the book item
+                .placeholder(R.drawable.google)  // Optional: show a placeholder while the image loads
+                .error(R.drawable.bookwise_logo)  // Optional: show this if there's an error loading the image
+                .into(holder.h_ActivityImage);
 
         holder.itemView.setOnClickListener(v -> {
             // Create an Intent to start BookDetailActivity
@@ -50,7 +57,7 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
             intent.putExtra("genres", book.getGenres());
             intent.putExtra("summary", book.getSummary());
             intent.putExtra("date", book.getDate());
-            intent.putExtra("imageID", book.getImageID());
+            intent.putExtra("imageURL", book.getImageURL());
             // Start the activity
             v.getContext().startActivity(intent);
         });

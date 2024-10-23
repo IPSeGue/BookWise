@@ -15,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,14 +98,18 @@ public class BookDetailActivity extends AppCompatActivity {
         String genres = intent.getStringExtra("genres");
         String summary = intent.getStringExtra("summary");
         String date = intent.getStringExtra("date");
-        int imageID = intent.getIntExtra("imageID", 1);
+        String imageURL = intent.getStringExtra("imageURL");
 
         bookTitle.setText(title);
         bookAuthor.setText("By: "+ author);
         bookGenres.setText(genres);
         bookSummary.setText(summary);
         bookDate.setText(date);
-        bookImageID.setImageResource(imageID);
+        Glide.with(this)
+                .load(imageURL)  // Use the image URL retrieved from the intent
+                .placeholder(R.drawable.google)  // Optional: a placeholder while the image loads
+                .error(R.drawable.logo)  // Optional: an error image if loading fails
+                .into(bookImageID);
     }
 
     public void homePage(){

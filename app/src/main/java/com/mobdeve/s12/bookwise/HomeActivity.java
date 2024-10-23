@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +19,7 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
     private ImageView userProfile;
     private RecyclerView rv_home_item;
 
-    private HomeActivityAdapter activityHomeAdaptor;
+    private HomeActivityAdapter activityHomeAdapter;
     private List<Bookitem> bookitemList;
     private List<Bookitem> collectionBookitemList;
 
@@ -33,13 +35,27 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
         // Initialize data
         bookitemList = new ArrayList<>();
         collectionBookitemList = new ArrayList<>();
-        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, R.drawable.google));
-        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
-        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, R.drawable.x));
+//        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, R.drawable.google));
+//        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
+//        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, R.drawable.x));
 
         // Set Adapter
-        activityHomeAdaptor = new HomeActivityAdapter(bookitemList, this);
-        rv_home_item.setAdapter(activityHomeAdaptor);
+        activityHomeAdapter = new HomeActivityAdapter(bookitemList, this);
+        rv_home_item.setAdapter(activityHomeAdapter);
+
+        GoogleBookAPI googleBooksAPI = new GoogleBookAPI();
+        googleBooksAPI.fetchBooks("harry potter", new GoogleBookAPI.OnBooksFetchedListener() {
+            @Override
+            public void onBooksFetched(List<Bookitem> books) {
+                bookitemList.addAll(books);
+                activityHomeAdapter.notifyDataSetChanged();  // Notify the adapter that data has changed
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(HomeActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         btnHome.setOnClickListener(v -> homePage());
