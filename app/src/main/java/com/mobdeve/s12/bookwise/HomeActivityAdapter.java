@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapter.ViewHolder>{
+public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapter.ViewHolder> {
 
     private List<Bookitem> bookitemList;
     private OnCollectClickListener collectClickListener;
@@ -40,25 +40,28 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
         holder.h_ActivityTitle.setText(book.getTitle());
         holder.h_ActivityAuthor.setText("By: "+ book.getAuthor());
         holder.h_ActivityRating.setRating(book.getRating());
-        holder.bindData(book, collectClickListener);
+        holder.h_CollectButton.setChecked(book.isCollected());
 
         Glide.with(holder.itemView.getContext())
-                .load(book.getImageURL())  // URL from the book item
-                .placeholder(R.drawable.google)  // Optional: show a placeholder while the image loads
-                .error(R.drawable.bookwise_logo)  // Optional: show this if there's an error loading the image
+                .load(book.getImageURL())
+                .placeholder(R.drawable.google)
+                .error(R.drawable.bookwise_logo)
                 .into(holder.h_ActivityImage);
 
+        holder.h_CollectButton.setOnClickListener(v -> {
+            boolean isCollected = holder.h_CollectButton.isChecked();
+            collectClickListener.onCollectClick(book, isCollected);
+            book.setCollected(isCollected); // Update the collection state of the book
+        });
+
         holder.itemView.setOnClickListener(v -> {
-            // Create an Intent to start BookDetailActivity
             Intent intent = new Intent(v.getContext(), BookDetailActivity.class);
-            // Pass the book details to the intent
             intent.putExtra("title", book.getTitle());
             intent.putExtra("author", book.getAuthor());
             intent.putExtra("genres", book.getGenres());
             intent.putExtra("summary", book.getSummary());
             intent.putExtra("date", book.getDate());
             intent.putExtra("imageURL", book.getImageURL());
-            // Start the activity
             v.getContext().startActivity(intent);
         });
     }
@@ -82,19 +85,10 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
             h_ActivityRating = itemView.findViewById(R.id.hi_rating);
             h_CollectButton = itemView.findViewById(R.id.hi_collect);
         }
+    }
 
-        public void bindData(Bookitem book, OnCollectClickListener collectClickListener) {
-            h_ActivityTitle.setText(book.getTitle());
-            h_ActivityAuthor.setText(book.getAuthor());
-            h_ActivityRating.setRating(book.getRating());
-
-            // Set the toggle button status based on whether the item is collected or not
-            h_CollectButton.setChecked(book.isCollected());
-
-            // ToggleButton click listener to mark the item as collected
-            h_CollectButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                collectClickListener.onCollectClick(getAdapterPosition(), isChecked);
-            });
-        }
+    public interface OnCollectClickListener {
+        void onCollectClick(Bookitem item, boolean isCollected);
     }
 }
+

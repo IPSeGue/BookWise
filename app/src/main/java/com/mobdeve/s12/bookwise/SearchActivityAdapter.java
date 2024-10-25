@@ -40,13 +40,19 @@ public class SearchActivityAdapter extends RecyclerView.Adapter<SearchActivityAd
         holder.ActivityAuthor.setText("By: "+ book.getAuthor());
         holder.ActivityGenres.setText("Genres: \n"+ book.getGenres());
         holder.ActivityDate.setText("Published: \n"+ book.getDate());
-        holder.bindData(book, collectClickListener);
+        holder.CollectButton.setChecked(book.isCollected());
 
         Glide.with(holder.itemView.getContext())
                 .load(book.getImageURL())  // URL from the book item
                 .placeholder(R.drawable.google)  // Optional: show a placeholder while the image loads
                 .error(R.drawable.bookwise_logo)  // Optional: show this if there's an error loading the image
                 .into(holder.ActivityImage);
+
+        holder.CollectButton.setOnClickListener(v -> {
+            boolean isCollected = holder.CollectButton.isChecked();
+            collectClickListener.onCollectClick(book, isCollected);
+            book.setCollected(isCollected); // Update the collection state of the book
+        });
     }
 
     @Override
@@ -68,19 +74,8 @@ public class SearchActivityAdapter extends RecyclerView.Adapter<SearchActivityAd
             ActivityDate = itemView.findViewById(R.id.si_publish);
             CollectButton = itemView.findViewById(R.id.si_collect);
         }
-        public void bindData(Bookitem book, OnCollectClickListener collectClickListener) {
-            ActivityTitle.setText(book.getTitle());
-            ActivityTitle.setText(book.getAuthor());
-            ActivityGenres.setText(book.getGenres());
-            ActivityDate.setText(book.getDate());
-
-            // Set the toggle button status based on whether the item is collected or not
-            CollectButton.setChecked(book.isCollected());
-
-            // ToggleButton click listener to mark the item as collected
-            CollectButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                collectClickListener.onCollectClick(getAdapterPosition(), isChecked);
-            });
-        }
+    }
+    public interface OnCollectClickListener {
+        void onCollectClick(Bookitem item, boolean isCollected);
     }
 }

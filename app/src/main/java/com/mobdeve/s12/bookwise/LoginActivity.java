@@ -22,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView btnSignUp, btnForgotPass;
     private EditText emailInput, passWord;
     private ImageButton facebook, goolge, x;
-    private List<Bookitem> books;
+    //private List<Bookitem> books;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +78,12 @@ public class LoginActivity extends AppCompatActivity {
                 dataGenerator.fetchAndSaveBooks("fiction", new GoogleBookAPI.OnBooksFetchedListener() {
                     @Override
                     public void onBooksFetched(List<Bookitem> books) {
+                        DataGeneratorBooks.getInstance().setBookList(books);
+
                         // Pass the books to HomeActivity
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        intent.putParcelableArrayListExtra("bookitemList", new ArrayList<>(books));  // Casting to ArrayList
                         startActivity(intent);
+
                         finish();
                     }
 

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements OnCollectClickListener {
+public class HomeActivity extends AppCompatActivity implements HomeActivityAdapter.OnCollectClickListener {
 
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private ImageView userProfile;
@@ -31,9 +31,8 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
         // Initialize RecyclerView
         initViews();
 
-        Intent intent = getIntent();
-        bookitemList = (List<Bookitem>) intent.getSerializableExtra("bookitemList");
-        initViews();
+        bookitemList = DataGeneratorBooks.getInstance().getBookList();
+
         if (bookitemList == null) {
             bookitemList = new ArrayList<>(); // Initialize as empty if null
         }
@@ -42,9 +41,6 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
 
         // Initialize data
         collectionBookitemList = new ArrayList<>();
-//        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, R.drawable.google));
-//        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
-//        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, R.drawable.x));
 
         // Set Adapter
         activityHomeAdapter = new HomeActivityAdapter(bookitemList, this);
@@ -58,14 +54,14 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
         userProfile.setOnClickListener(v -> userProfilePage());
     }
 
-    public void onCollectClick(int position, boolean isCollected) {
-        Bookitem item = bookitemList.get(position);
-        item.setCollected(isCollected);  // Update the collected status in the model
-
+    @Override
+    public void onCollectClick(Bookitem item, boolean isCollected) {
         if (isCollected) {
-            collectionBookitemList.add(item);  // Add to collected list
+            if (!collectionBookitemList.contains(item)) {
+                collectionBookitemList.add(item);
+            }
         } else {
-            collectionBookitemList.remove(item);  // Remove from collected list
+            collectionBookitemList.remove(item);
         }
     }
 
@@ -81,7 +77,6 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
 
     public void homePage(){
         Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
@@ -100,7 +95,6 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
 
     public void collectionPage(){
         Intent intent = new Intent(HomeActivity.this, CollectionActivity.class);
-        intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

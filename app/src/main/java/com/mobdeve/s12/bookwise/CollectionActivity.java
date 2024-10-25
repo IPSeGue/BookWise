@@ -16,14 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionActivity extends AppCompatActivity {
+public class CollectionActivity extends AppCompatActivity implements HomeActivityAdapter.OnCollectClickListener{
 
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private ImageView userProfile;
     private RecyclerView rv_home_item;
 
-    private HomeActivityAdapter activityHomeAdaptor;
-    private ArrayList<Bookitem> collectedItems;
+    private HomeActivityAdapter activityHomeAdapter;
+    private List<Bookitem> collectedItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +35,14 @@ public class CollectionActivity extends AppCompatActivity {
         rv_home_item.setLayoutManager(new LinearLayoutManager(this));
 
 
-        collectedItems = getIntent().getParcelableArrayListExtra("collectedItems");
+        collectedItems = DataGeneratorBooks.getInstance().getCollectedBookitemList();
 
-
+        if (collectedItems == null) {
+            collectedItems = new ArrayList<>(); // Initialize as empty if null
+        }
         // Set Adapter
-        activityHomeAdaptor = new HomeActivityAdapter(collectedItems, null);
-        rv_home_item.setAdapter(activityHomeAdaptor);
+        activityHomeAdapter = new HomeActivityAdapter(collectedItems, this);
+        rv_home_item.setAdapter(activityHomeAdapter);
 
 
         btnHome.setOnClickListener(v -> homePage());
@@ -50,6 +52,7 @@ public class CollectionActivity extends AppCompatActivity {
         btnGoal.setOnClickListener(v -> goalPage());
         userProfile.setOnClickListener(v -> userProfilePage());
     }
+
     public void initViews(){
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
@@ -60,9 +63,15 @@ public class CollectionActivity extends AppCompatActivity {
         rv_home_item = findViewById(R.id.rv_home_item);
     }
 
+    @Override
+    public void onCollectClick(Bookitem item, boolean isCollected) {
+        // Update collection status as needed
+        item.setCollected(isCollected);
+        // You can also update the collectedItems list here if needed
+    }
+
     public void homePage(){
         Intent intent = new Intent(CollectionActivity.this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }

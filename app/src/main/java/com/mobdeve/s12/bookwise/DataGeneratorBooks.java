@@ -1,8 +1,11 @@
 package com.mobdeve.s12.bookwise;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataGeneratorBooks {
+    private static final DataGeneratorBooks instance = new DataGeneratorBooks();
+    private List<Bookitem> bookitemList = new ArrayList<>();
     private GoogleBookAPI googleBooksAPI;
 
     public DataGeneratorBooks() {
@@ -33,5 +36,27 @@ public class DataGeneratorBooks {
             System.out.println("Saving book: " + book.getTitle());
             // Add your save logic here, e.g., database insertion
         }
+    }
+
+    public static DataGeneratorBooks getInstance() {
+        return instance;
+    }
+
+    public List<Bookitem> getBookList() {
+        return bookitemList;
+    }
+
+    public void setBookList(List<Bookitem> bookList) {
+        this.bookitemList = bookList;
+    }
+
+    public List<Bookitem> getCollectedBookitemList() {
+        List<Bookitem> collectedBooks = new ArrayList<>();
+        for (Bookitem item : bookitemList) {
+            if (item.isCollected()) {
+                collectedBooks.add(item);
+            }
+        }
+        return collectedBooks;
     }
 }

@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements OnCollectClickListener{
+public class SearchActivity extends AppCompatActivity implements SearchActivityAdapter.OnCollectClickListener {
 
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private RecyclerView rv_search_item;
@@ -34,14 +34,21 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
 
         // Initialize RecyclerView
         initViews();
+
+        bookitemList = DataGeneratorBooks.getInstance().getBookList();
+
+        if (bookitemList == null) {
+            bookitemList = new ArrayList<>(); // Initialize as empty if null
+        }
+
         rv_search_item.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize data
-        bookitemList = new ArrayList<>();
         collectionBookitemList = new ArrayList<>();
-        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));
+
+        /*bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));
         bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));
-        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));
+        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));*/
 
         // Set Adapter
         activitySearchAdapter = new SearchActivityAdapter(bookitemList, this);
@@ -56,14 +63,13 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
         btnAdvance.setOnClickListener(v -> advanceSearch());
     }
 
-    public void onCollectClick(int position, boolean isCollected) {
-        Bookitem item = bookitemList.get(position);
-        item.setCollected(isCollected);  // Update the collected status in the model
-
+    public void onCollectClick(Bookitem item, boolean isCollected) {
         if (isCollected) {
-            collectionBookitemList.add(item);  // Add to collected list
+            if (!collectionBookitemList.contains(item)) {
+                collectionBookitemList.add(item);
+            }
         } else {
-            collectionBookitemList.remove(item);  // Remove from collected list
+            collectionBookitemList.remove(item);
         }
     }
 
@@ -79,7 +85,6 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
 
     public void homePage(){
         Intent intent = new Intent(SearchActivity.this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
@@ -98,7 +103,6 @@ public class SearchActivity extends AppCompatActivity implements OnCollectClickL
 
     public void collectionPage(){
         Intent intent = new Intent(SearchActivity.this, CollectionActivity.class);
-        intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
