@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set up onClickListeners using lambda expressions
         btnStart.setOnClickListener { onSignIn() }
+
     }
 
     private fun onSignIn() {

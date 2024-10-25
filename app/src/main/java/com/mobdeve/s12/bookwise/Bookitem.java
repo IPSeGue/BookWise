@@ -3,9 +3,10 @@ package com.mobdeve.s12.bookwise;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Bookitem implements Parcelable {
+public class Bookitem implements Parcelable, Serializable {
     private String title, author, genres, summary, imageURL;
     private int rating, day, month, year;
     private boolean isCollected;

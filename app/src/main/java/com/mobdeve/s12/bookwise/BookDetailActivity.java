@@ -114,6 +114,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
     public void homePage(){
         Intent intent = new Intent(BookDetailActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

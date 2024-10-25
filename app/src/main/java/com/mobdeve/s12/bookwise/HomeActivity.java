@@ -30,10 +30,17 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
 
         // Initialize RecyclerView
         initViews();
+
+        Intent intent = getIntent();
+        bookitemList = (List<Bookitem>) intent.getSerializableExtra("bookitemList");
+        initViews();
+        if (bookitemList == null) {
+            bookitemList = new ArrayList<>(); // Initialize as empty if null
+        }
+
         rv_home_item.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize data
-        bookitemList = new ArrayList<>();
         collectionBookitemList = new ArrayList<>();
 //        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, R.drawable.google));
 //        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
@@ -42,21 +49,6 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
         // Set Adapter
         activityHomeAdapter = new HomeActivityAdapter(bookitemList, this);
         rv_home_item.setAdapter(activityHomeAdapter);
-
-        GoogleBookAPI googleBooksAPI = new GoogleBookAPI();
-        googleBooksAPI.fetchBooks("harry potter", new GoogleBookAPI.OnBooksFetchedListener() {
-            @Override
-            public void onBooksFetched(List<Bookitem> books) {
-                bookitemList.addAll(books);
-                activityHomeAdapter.notifyDataSetChanged();  // Notify the adapter that data has changed
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                Toast.makeText(HomeActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
@@ -89,6 +81,7 @@ public class HomeActivity extends AppCompatActivity implements OnCollectClickLis
 
     public void homePage(){
         Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

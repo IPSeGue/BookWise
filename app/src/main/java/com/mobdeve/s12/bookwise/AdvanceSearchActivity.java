@@ -66,6 +66,7 @@ public class AdvanceSearchActivity extends AppCompatActivity {
 
     public void homePage(){
         Intent intent = new Intent(AdvanceSearchActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

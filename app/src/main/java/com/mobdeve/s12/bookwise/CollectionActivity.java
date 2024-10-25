@@ -62,6 +62,7 @@ public class CollectionActivity extends AppCompatActivity {
 
     public void homePage(){
         Intent intent = new Intent(CollectionActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
