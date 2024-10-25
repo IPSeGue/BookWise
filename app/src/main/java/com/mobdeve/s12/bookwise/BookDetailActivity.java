@@ -132,7 +132,6 @@ public class BookDetailActivity extends AppCompatActivity {
 
     public void collectionPage(){
         Intent intent = new Intent(BookDetailActivity.this, CollectionActivity.class);
-        intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

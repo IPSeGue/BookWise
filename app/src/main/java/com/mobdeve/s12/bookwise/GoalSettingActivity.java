@@ -71,7 +71,6 @@ public class GoalSettingActivity extends AppCompatActivity {
 
     public void collectionPage(){
         Intent intent = new Intent(GoalSettingActivity.this, CollectionActivity.class);
-        intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

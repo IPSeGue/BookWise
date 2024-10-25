@@ -78,7 +78,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void collectionPage(){
         Intent intent = new Intent(UserProfileActivity.this, CollectionActivity.class);
-        intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

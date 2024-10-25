@@ -46,10 +46,6 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
         // Initialize data
         collectionBookitemList = new ArrayList<>();
 
-        /*bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));
-        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));
-        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, "https://banner2.cleanpng.com/20240111/qtv/transparent-google-logo-colorful-google-logo-with-bold-green-1710929465092.webp"));*/
-
         // Set Adapter
         activitySearchAdapter = new SearchActivityAdapter(bookitemList, this);
         rv_search_item.setAdapter(activitySearchAdapter);

@@ -84,7 +84,6 @@ public class AdvanceSearchActivity extends AppCompatActivity {
 
     public void collectionPage(){
         Intent intent = new Intent(AdvanceSearchActivity.this, CollectionActivity.class);
-        intent.putParcelableArrayListExtra("collectedItems", new ArrayList<>(collectionBookitemList));
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

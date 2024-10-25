@@ -40,6 +40,7 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
         if (collectedItems == null) {
             collectedItems = new ArrayList<>(); // Initialize as empty if null
         }
+
         // Set Adapter
         activityHomeAdapter = new HomeActivityAdapter(collectedItems, this);
         rv_home_item.setAdapter(activityHomeAdapter);
