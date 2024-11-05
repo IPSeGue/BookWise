@@ -98,13 +98,14 @@
                     android:layout_weight="1" />
 
                 <RatingBar
-                    android:id="@+id/ratingBar"
+                    android:id="@+id/bd_rating"
                     style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:max="5"
+                    android:isIndicator="false"
                     android:numStars="5"
-                    android:rating="1" />
+                    android:rating="1"
+                    android:stepSize="1.0" />
 
                 <TextView
                     android:id="@+id/textView19"
@@ -115,7 +116,7 @@
             </LinearLayout>
 
             <EditText
-                android:id="@+id/editTextTextMultiLine"
+                android:id="@+id/bd_content"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@drawable/text_box"

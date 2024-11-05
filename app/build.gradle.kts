@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -59,6 +60,10 @@ dependencies {
 
     // For image loading with Glide
     implementation (libs.glide)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.analytics)
     annotationProcessor (libs.compiler)
 
     testImplementation(libs.junit)

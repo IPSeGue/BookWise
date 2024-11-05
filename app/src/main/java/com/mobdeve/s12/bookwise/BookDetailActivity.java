@@ -3,21 +3,19 @@ package com.mobdeve.s12.bookwise;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BookDetailActivity extends AppCompatActivity {
@@ -27,9 +25,11 @@ public class BookDetailActivity extends AppCompatActivity {
 
     private ImageView bookImageID;
     private TextView bookTitle, bookAuthor, bookSummary, bookGenres, bookDate;
+    private EditText content;
+    private RatingBar ratingResult;
 
-
-    private HomeActivityAdapter activityHomeAdaptor;
+    private Bookitem currentBook;
+    private BookDetailActivityAdapter activityBookDetailAdapter;
     private List<Bookitem> bookitemList;
     private List<Bookitem> collectionBookitemList;
 
@@ -50,9 +50,9 @@ public class BookDetailActivity extends AppCompatActivity {
 //        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
 //        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, R.drawable.x));
 //
-//        // Set Adapter
-//        activityHomeAdaptor = new HomeActivityAdapter(bookitemList, this);
-//        rv_review_item.setAdapter(activityHomeAdaptor);
+        // Set Adapter
+        //activityBookDetailAdapter = new BookDetailActivityAdapter(bookitemList, this);
+        rv_review_item.setAdapter(activityBookDetailAdapter);
 
 
 
@@ -61,6 +61,7 @@ public class BookDetailActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
+        //btnSubmit.setOnClickListener(v ->);
     }
 
     public void onCollectClick(int position, boolean isCollected) {
@@ -83,6 +84,9 @@ public class BookDetailActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.bd_submit);
         rv_review_item = findViewById(R.id.rv_review_item);
 
+        content = findViewById(R.id.bd_content);
+        ratingResult = findViewById(R.id.bd_rating);
+
         bookImageID = findViewById(R.id.bd_imageID);
         bookTitle = findViewById(R.id.bd_title);
         bookAuthor = findViewById(R.id.bd_author);
@@ -90,6 +94,10 @@ public class BookDetailActivity extends AppCompatActivity {
         bookDate = findViewById(R.id.bd_date);
         bookSummary = findViewById(R.id.bd_summary);
     }
+
+
+
+
 
     public void data(){
         Intent intent = getIntent();
@@ -110,6 +118,11 @@ public class BookDetailActivity extends AppCompatActivity {
                 .placeholder(R.drawable.google)  // Optional: a placeholder while the image loads
                 .error(R.drawable.logo)  // Optional: an error image if loading fails
                 .into(bookImageID);
+    }
+
+    private Users getUser() {
+        // Replace this with actual logic to get the current user
+        return new Users("John Doe", "john@example.com ", "123", 1);
     }
 
     public void homePage(){

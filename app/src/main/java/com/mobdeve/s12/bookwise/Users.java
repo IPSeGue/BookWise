@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Users {
     private String fullName, email, password;
-    private ArrayList<Bookitem> books;
+    private ArrayList<Bookitem> bookCollection;
     private ArrayList<Reviews> reviews;
     private int imageID;
 
@@ -13,24 +13,36 @@ public class Users {
         this.email = email;
         this.password = password;
         this.imageID = imageID;
-        this.books = new ArrayList<>();
+        this.bookCollection = new ArrayList<>();
         this.reviews = new ArrayList<>();
     }
 
-    public String getFullName(){ return fullName;}
+    public String getFullName(){
+        return fullName;
+    }
 
-    public String getEmail(){ return email;}
+    public String getEmail(){
+        return email;
+    }
 
-    public String getPassword(){ return password;}
+    public String getPassword(){
+        return password;
+    }
 
-    public int getImageID(){ return imageID; }
+    public int getImageID(){
+        return imageID;
+    }
 
-    public ArrayList<Bookitem> getBooks() { return books; }
+    public ArrayList<Bookitem> getBooks() {
+        return bookCollection;
+    }
 
-    public ArrayList<Reviews> getReviews() { return reviews; }
+    public ArrayList<Reviews> getReviews() {
+        return reviews;
+    }
 
-    public void addBook(Bookitem book) {
-        books.add(book);
+    public void addBookToCollection(Bookitem book) {
+        bookCollection.add(book);
     }
 
     public void addReview(Reviews review) {
