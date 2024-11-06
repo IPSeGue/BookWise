@@ -10,19 +10,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity {
+import org.mindrot.jbcrypt.BCrypt;
 
+public class LoginActivity extends AppCompatActivity {
     private Button btnLogIn;
     private TextView btnSignUp, btnForgotPass;
     private EditText emailInput, passWord;
     private ImageButton facebook, goolge, x;
     //private List<Bookitem> books;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         initViews();
+        FirebaseApp.initializeApp(this);
+        fetchBooksAndProceed();
+
         btnLogIn.setOnClickListener(v -> logIn());
         btnSignUp.setOnClickListener(v -> signUpPage());
         btnForgotPass.setOnClickListener(v -> forgotPassPage());
@@ -56,6 +63,25 @@ public class LoginActivity extends AppCompatActivity {
         x = findViewById(R.id.l_x);
     }
 
+    private void fetchBooksAndProceed() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DataGeneratorBooks dataGenerator = new DataGeneratorBooks(db);
+        dataGenerator.initializeBooks("fiction", new GoogleBookAPI.OnBooksFetchedListener() {
+            @Override
+            public void onBooksFetched(List<Bookitem> books) {
+                // Set the fetched books in the singleton instance
+                DataGeneratorBooks.getInstance().setBookList(books);
+                Toast.makeText(LoginActivity.this, "Books fetched successfully", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // Handle error if fetching books fails
+                Toast.makeText(LoginActivity.this, "Error fetching books: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void logIn(){
         String email = emailInput.getText().toString().trim();
         String password = passWord.getText().toString().trim();
@@ -64,38 +90,51 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
         } else {
             // Replace with your actual credential check logic
-            if (email.equals("123") && password.equals("pw")) {
-                Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
+            checkCredentials(email,password);
 
 //                        if (rememberMeCheckbox.isChecked()) {
 //                            saveRememberMe(email, password);
 //                        } else {
 //                            clearRememberMe();
 //                        }
-
-                // Change this line to redirect to StepCounterActivity
-                DataGeneratorBooks dataGenerator = new DataGeneratorBooks();
-                dataGenerator.fetchAndSaveBooks("fiction", new GoogleBookAPI.OnBooksFetchedListener() {
-                    @Override
-                    public void onBooksFetched(List<Bookitem> books) {
-                        DataGeneratorBooks.getInstance().setBookList(books);
-
-                        // Pass the books to HomeActivity
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(intent);
-
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-            }
         }
+    }
+
+    private void checkCredentials(String email, String password) {
+        // Get Firestore instance
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        // Query the users collection for the email
+        firestore.collection("users")
+                .whereEqualTo("email", email) // Match the email
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                        // Check if we found a matching user
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        String storedHashedPassword = document.getString("password"); // The hashed password
+
+                        // Check if the entered password matches the stored hashed password
+                        if (storedHashedPassword != null && BCrypt.checkpw(password, storedHashedPassword)) {
+                            // Password is correct, proceed with login
+                            Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
+                            // Call method to load the next activity
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);  // Start the HomeActivity
+                            finish();
+                        } else {
+                            // Incorrect password
+                            Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Email not found in Firestore
+                        Toast.makeText(LoginActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Error occurred while querying Firestore
+                    Toast.makeText(LoginActivity.this, "Error fetching data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     public void signUpPage(){

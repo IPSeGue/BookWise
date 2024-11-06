@@ -11,18 +11,26 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private Button btnRegister;
     private TextView  btnLogin;
     private EditText fullName, emailInput, passWord, confirmPass;
@@ -32,6 +40,9 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         initViews();
         btnRegister.setOnClickListener(v -> register());
@@ -50,15 +61,58 @@ public class SignUpActivity extends AppCompatActivity {
         x = findViewById(R.id.su_x);
     }
 
-    public void register(){
+    public void register() {
         String re_fullName = fullName.getText().toString().trim();
         String re_email = emailInput.getText().toString().trim();
         String re_password = passWord.getText().toString().trim();
         String re_confirmPassword = confirmPass.getText().toString().trim();
 
         if (isInputValid(re_fullName, re_email, re_password, re_confirmPassword)) {
-            Toast.makeText(SignUpActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+            // Check if the email is already in Firestore
+            db.collection("users").whereEqualTo("email", re_email)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                // No existing user, proceed with registration
+                                mAuth.createUserWithEmailAndPassword(re_email, re_password)
+                                        .addOnCompleteListener(authTask -> {
+                                            if (authTask.isSuccessful()) {
+                                                FirebaseUser user = mAuth.getCurrentUser();
+                                                saveUserDataToFirestore(user, re_fullName, re_email, re_password);
+                                            } else {
+                                                Toast.makeText(SignUpActivity.this, "Registration Failed: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            } else {
+                                // User with this email already exists
+                                Toast.makeText(SignUpActivity.this, "This email is already registered.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(SignUpActivity.this, "Error checking user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
+    }
+
+    private void saveUserDataToFirestore(FirebaseUser user, String fullName, String email, String password) {
+        // Create a user data map
+        HashMap<String, Object> userData = new HashMap<>();
+        userData.put("fullName", fullName);
+        userData.put("email", email);
+        userData.put("password", password);
+
+        // Save to Firestore
+        db.collection("users").document(user.getUid())
+                .set(userData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(SignUpActivity.this, "User registered successfully!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(SignUpActivity.this, "Failed to save user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     public boolean isInputValid(String re_fullName, String re_email, String re_password, String re_confirmPassword){
@@ -75,7 +129,7 @@ public class SignUpActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        if (re_password.isEmpty() || re_password.length() < 6) {
+        if (re_password.isEmpty() || re_password.length() < 2) {
             errorMessages.add("Your password is too short. Try Again!");
             isValid = false;
         }

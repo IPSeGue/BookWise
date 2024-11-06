@@ -64,6 +64,11 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.database)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation (libs.play.services.auth)
+    
+    implementation (libs.jbcrypt)
+
     annotationProcessor (libs.compiler)
 
     testImplementation(libs.junit)

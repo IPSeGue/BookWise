@@ -12,6 +12,10 @@ public class Bookitem implements Parcelable, Serializable {
     private boolean isCollected;
     private ArrayList<Reviews> reviews;
 
+    public Bookitem() {
+        // Empty constructor for Firestore
+    }
+
     public Bookitem(String title, String author, String genres, String summary, int rating, int day, int month, int year, String imageURL) {
         this.title = title;
         this.author = author;
