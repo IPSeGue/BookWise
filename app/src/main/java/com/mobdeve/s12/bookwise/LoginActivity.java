@@ -113,11 +113,13 @@ public class LoginActivity extends AppCompatActivity {
                         // Check if we found a matching user
                         DocumentSnapshot db = task.getResult().getDocuments().get(0);
                         String storedHashedPassword = db.getString("password"); // The hashed password
+
                         System.out.println("Stored Hashed Password: " + storedHashedPassword);
                         System.out.println("Stored Hashed Password: " + password);
+                        //password.equals(storedHashedPassword)
 
                         // Check if the entered password matches the stored hashed password
-                        if (password.equals(storedHashedPassword)) {
+                        if (BCrypt.checkpw(password, storedHashedPassword)) {
                             // Password is correct, proceed with login
                             Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
                             // Call method to load the next activity

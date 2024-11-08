@@ -23,6 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +103,9 @@ public class SignUpActivity extends AppCompatActivity {
         HashMap<String, Object> userData = new HashMap<>();
         userData.put("fullName", fullName);
         userData.put("email", email);
-        userData.put("password", password);
+        String hashPassword= BCrypt.hashpw(password, BCrypt.gensalt());
+        userData.put("password", hashPassword);
+        userData.put("verifyPassword", password);
 
         // Save to Firestore
         db.collection("users").document(user.getUid())
