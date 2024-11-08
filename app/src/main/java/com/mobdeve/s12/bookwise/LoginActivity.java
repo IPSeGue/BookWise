@@ -114,8 +114,6 @@ public class LoginActivity extends AppCompatActivity {
                         DocumentSnapshot db = task.getResult().getDocuments().get(0);
                         String storedHashedPassword = db.getString("password"); // The hashed password
 
-                        System.out.println("Stored Hashed Password: " + storedHashedPassword);
-                        System.out.println("Stored Hashed Password: " + password);
                         //password.equals(storedHashedPassword)
 
                         // Check if the entered password matches the stored hashed password
