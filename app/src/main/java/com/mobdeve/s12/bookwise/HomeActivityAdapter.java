@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -52,6 +53,23 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
                 .placeholder(R.drawable.google)
                 .error(R.drawable.bookwise_logo)
                 .into(holder.h_ActivityImage);
+
+        // Check Firestore to see if the book is already in the user’s collection
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .collection("bookCollection")
+                .document(book.getBookId())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    boolean isCollected = documentSnapshot.exists(); // Toggle button based on existence
+                    holder.h_CollectButton.setChecked(isCollected);
+                    book.setCollected(isCollected); // Update the collection state of the book in the list
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors (optional)
+                    holder.h_CollectButton.setChecked(false); // Default to not collected on error
+                });
 
         holder.h_CollectButton.setOnClickListener(v -> {
             boolean isCollected = holder.h_CollectButton.isChecked();

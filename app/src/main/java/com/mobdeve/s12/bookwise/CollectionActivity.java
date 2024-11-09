@@ -109,9 +109,33 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
 
     @Override
     public void onCollectClick(Bookitem item, boolean isCollected, String userId) {
-        // Update collection status as needed
-        item.setCollected(isCollected);
-        // You can also update the collectedItems list here if needed
+        if (isCollected) {
+            // Add book to Firestore
+            db.collection("users").document(userId)
+                    .collection("bookCollection").document(item.getBookId()) // Ensure item has a unique ID
+                    .set(item)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(CollectionActivity.this, "Book added to collection", Toast.LENGTH_SHORT).show();
+                        if (!collectedItems.contains(item)) {
+                            collectedItems.add(item);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(CollectionActivity.this, "Failed to add book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            // Remove book from Firestore
+            db.collection("users").document(userId)
+                    .collection("bookCollection").document(item.getBookId())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(CollectionActivity.this, "Book removed from collection", Toast.LENGTH_SHORT).show();
+                        collectedItems.remove(item);
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(CollectionActivity.this, "Failed to remove book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
     }
 
     public void homePage(){
