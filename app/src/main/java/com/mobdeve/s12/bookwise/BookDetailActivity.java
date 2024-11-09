@@ -95,10 +95,6 @@ public class BookDetailActivity extends AppCompatActivity {
         bookSummary = findViewById(R.id.bd_summary);
     }
 
-
-
-
-
     public void data(){
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
@@ -118,11 +114,6 @@ public class BookDetailActivity extends AppCompatActivity {
                 .placeholder(R.drawable.google)  // Optional: a placeholder while the image loads
                 .error(R.drawable.logo)  // Optional: an error image if loading fails
                 .into(bookImageID);
-    }
-
-    private Users getUser() {
-        // Replace this with actual logic to get the current user
-        return new Users("John Doe", "john@example.com ", "123", 1);
     }
 
     public void homePage(){

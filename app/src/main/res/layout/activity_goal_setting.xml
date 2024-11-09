@@ -20,7 +20,7 @@
             android:id="@+id/gs_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:background="@drawable/myprofile" />
+            tools:srcCompat="@tools:sample/avatars[0]" />
 
         <Button
             android:id="@+id/gs_saveGoal"

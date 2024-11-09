@@ -6,13 +6,13 @@ public class Users {
     private String fullName, email, password;
     private ArrayList<Bookitem> bookCollection;
     private ArrayList<Reviews> reviews;
-    private int imageId;
+    private String imageUrl;
 
-    public Users(String fullName, String email, String password, int imageID){
+    public Users(String fullName, String email, String password, String imageUrl){
         this.fullName = fullName;
         this.email = email;
         this.password = password;
-        this.imageId = imageID;
+        this.imageUrl = imageUrl;
         this.bookCollection = new ArrayList<>();
         this.reviews = new ArrayList<>();
     }
@@ -29,8 +29,8 @@ public class Users {
         return password;
     }
 
-    public int getImageID(){
-        return imageId;
+    public String getImageUrl(){
+        return imageUrl;
     }
 
     public ArrayList<Bookitem> getBooks() {

@@ -3,13 +3,20 @@ package com.mobdeve.s12.bookwise;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +26,12 @@ public class UserSettingActivity extends AppCompatActivity {
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private Button btnSaveProfile;
 
-    private List<Bookitem> collectionBookitemList;
+    private TextView fullName, email;
+    private ImageView profileImage;
 
-    //private List<User> userList;
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +40,11 @@ public class UserSettingActivity extends AppCompatActivity {
 
         // Initialize RecyclerView
         initViews();
-        collectionBookitemList = new ArrayList<>();
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        userId = auth.getCurrentUser().getUid();
 
-
+        loadUserData();
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
@@ -42,6 +54,38 @@ public class UserSettingActivity extends AppCompatActivity {
         btnSaveProfile.setOnClickListener(v -> userProfilePage());
     }
 
+    private void loadUserData() {
+        // Reference to the Firestore user document
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Get and display the full name and email
+                        String name = documentSnapshot.getString("fullName");
+                        String userEmail = documentSnapshot.getString("email");
+                        String imageUrl = documentSnapshot.getString("imageUrl"); // Assume profileImageUrl field
+
+                        fullName.setText(name);
+                        email.setText(userEmail);
+                        if (imageUrl != null && imageUrl.equals("default")){
+                            profileImage.setImageResource(R.drawable.user_profile);
+                        }
+                        else{
+                            // Load image using Glide if the image URL is available
+                            Glide.with(this)
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.user_profile) // Optional: placeholder while loading
+                                    .error(R.drawable.error_profile) // Optional: error image if URL fails
+                                    .into(profileImage);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure, e.g., show a message
+                    Toast.makeText(UserSettingActivity.this, "Error loading user data", Toast.LENGTH_SHORT).show();
+                });
+    }
+
     public void initViews(){
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
@@ -49,7 +93,12 @@ public class UserSettingActivity extends AppCompatActivity {
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
         btnSaveProfile = findViewById(R.id.us_saveProfile);
+
+        fullName = findViewById(R.id.us_fullName);
+        email = findViewById(R.id.us_email);
+        profileImage = findViewById(R.id.us_image);
     }
+
 
     public void homePage(){
         Intent intent = new Intent(UserSettingActivity.this, HomeActivity.class);

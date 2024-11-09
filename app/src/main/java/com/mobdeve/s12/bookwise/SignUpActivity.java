@@ -108,7 +108,7 @@ public class SignUpActivity extends AppCompatActivity {
         String hashPassword= BCrypt.hashpw(password, BCrypt.gensalt());
         userData.put("password", hashPassword);
         userData.put("verifyPassword", password);
-        userData.put("imageId", null);
+        userData.put("imageUrl", "default");
 
         // Save to Firestore
         db.collection("users").document(user.getUid())

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +28,12 @@ public class UserProfileActivity extends AppCompatActivity {
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private Button btnGoalSetting, btnSetting, btnLogOut;
 
-    private List<Bookitem> collectionBookitemList;
+    private TextView fullName, email;
+    private ImageView profileImage;
 
-    //private List<User> userList;
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +42,11 @@ public class UserProfileActivity extends AppCompatActivity {
 
         // Initialize RecyclerView
         initViews();
-        collectionBookitemList = new ArrayList<>();
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        userId = auth.getCurrentUser().getUid();
 
-
+        loadUserData();
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
@@ -56,6 +67,42 @@ public class UserProfileActivity extends AppCompatActivity {
         btnGoalSetting = findViewById(R.id.up_setGoal);
         btnSetting= findViewById(R.id.up_setting);
         btnLogOut = findViewById(R.id.up_logOut);
+
+        fullName = findViewById(R.id.up_fullName);
+        email = findViewById(R.id.up_email);
+        profileImage = findViewById(R.id.up_image);
+    }
+
+    private void loadUserData() {
+        // Reference to the Firestore user document
+        db.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    // Get and display the full name and email
+                    String name = documentSnapshot.getString("fullName");
+                    String userEmail = documentSnapshot.getString("email");
+                    String imageUrl = documentSnapshot.getString("imageUrl"); // Assume profileImageUrl field
+
+                    fullName.setText(name);
+                    email.setText(userEmail);
+                    if (imageUrl != null && imageUrl.equals("default")){
+                        profileImage.setImageResource(R.drawable.user_profile);
+                    }
+                    else{
+                        // Load image using Glide if the image URL is available
+                        Glide.with(this)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.user_profile) // Optional: placeholder while loading
+                                .error(R.drawable.error_profile) // Optional: error image if URL fails
+                                .into(profileImage);
+                    }
+                }
+            })
+            .addOnFailureListener(e -> {
+                // Handle failure, e.g., show a message
+                Toast.makeText(UserProfileActivity.this, "Error loading user data", Toast.LENGTH_SHORT).show();
+            });
     }
 
     public void homePage(){

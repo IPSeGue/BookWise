@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -44,6 +45,8 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
 
         userId = auth.getCurrentUser().getUid();
         checkUserCollection(userId);
+
+        loadUserData();
 
         if (collectedItems == null) {
             collectedItems = new ArrayList<>(); // Initialize as empty if null
@@ -90,6 +93,38 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
         rv_home_item.setAdapter(activityHomeAdapter);
         activityHomeAdapter.notifyDataSetChanged();
         Toast.makeText(this, "Loaded default book list.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadUserData() {
+        // Reference to the Firestore user document
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Get and display the full name and email
+                        String name = documentSnapshot.getString("fullName");
+                        String userEmail = documentSnapshot.getString("email");
+                        String imageUrl = documentSnapshot.getString("imageUrl"); // Assume profileImageUrl field
+
+//                        fullName.setText(name);
+//                        email.setText(userEmail);
+                        if (imageUrl != null && imageUrl.equals("default")){
+                            userProfile.setImageResource(R.drawable.user_profile);
+                        }
+                        else{
+                            // Load image using Glide if the image URL is available
+                            Glide.with(this)
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.user_profile) // Optional: placeholder while loading
+                                    .error(R.drawable.error_profile) // Optional: error image if URL fails
+                                    .into(userProfile);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure, e.g., show a message
+                    Toast.makeText(CollectionActivity.this, "Error loading user data", Toast.LENGTH_SHORT).show();
+                });
     }
 
     public void initViews(){

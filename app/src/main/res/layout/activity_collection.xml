@@ -16,7 +16,8 @@
             android:id="@+id/h_userProfile"
             android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:background="@drawable/myprofile" />
+            tools:src="@tools:sample/avatars[0]"
+            tools:srcCompat="@tools:sample/avatars[0]" />
 
         <Space
             android:layout_width="wrap_content"
@@ -31,11 +32,14 @@
             android:backgroundTint="#000000"
             android:backgroundTintMode="add" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Collection" />
+        android:text="My Collection"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_home_item"
