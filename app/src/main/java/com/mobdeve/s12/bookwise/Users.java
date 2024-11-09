@@ -6,13 +6,13 @@ public class Users {
     private String fullName, email, password;
     private ArrayList<Bookitem> bookCollection;
     private ArrayList<Reviews> reviews;
-    private int imageID;
+    private int imageId;
 
     public Users(String fullName, String email, String password, int imageID){
         this.fullName = fullName;
         this.email = email;
         this.password = password;
-        this.imageID = imageID;
+        this.imageId = imageID;
         this.bookCollection = new ArrayList<>();
         this.reviews = new ArrayList<>();
     }
@@ -30,7 +30,7 @@ public class Users {
     }
 
     public int getImageID(){
-        return imageID;
+        return imageId;
     }
 
     public ArrayList<Bookitem> getBooks() {

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -21,10 +22,14 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
 
     private List<Bookitem> bookitemList;
     private OnCollectClickListener collectClickListener;
+    private String userId;
 
-    public HomeActivityAdapter(List<Bookitem> bookitemList, OnCollectClickListener collectClickListener) {
+    private FirebaseAuth auth;
+
+    public HomeActivityAdapter(List<Bookitem> bookitemList, OnCollectClickListener collectClickListener,String userId) {
         this.bookitemList = bookitemList;
         this.collectClickListener = collectClickListener;
+        this.userId = userId;
     }
 
     @NonNull
@@ -50,7 +55,7 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
 
         holder.h_CollectButton.setOnClickListener(v -> {
             boolean isCollected = holder.h_CollectButton.isChecked();
-            collectClickListener.onCollectClick(book, isCollected);
+            collectClickListener.onCollectClick(book, isCollected, userId);
             book.setCollected(isCollected); // Update the collection state of the book
         });
 
@@ -88,7 +93,7 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
     }
 
     public interface OnCollectClickListener {
-        void onCollectClick(Bookitem item, boolean isCollected);
+        void onCollectClick(Bookitem item, boolean isCollected, String userId);
     }
 }
 

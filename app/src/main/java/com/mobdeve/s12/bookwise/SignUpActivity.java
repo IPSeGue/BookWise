@@ -29,6 +29,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -100,12 +101,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void saveUserDataToFirestore(FirebaseUser user, String fullName, String email, String password) {
         // Create a user data map
+        List<Map<String, Object>> bookCollection = new ArrayList<>();
         HashMap<String, Object> userData = new HashMap<>();
         userData.put("fullName", fullName);
         userData.put("email", email);
         String hashPassword= BCrypt.hashpw(password, BCrypt.gensalt());
         userData.put("password", hashPassword);
         userData.put("verifyPassword", password);
+        userData.put("imageId", null);
 
         // Save to Firestore
         db.collection("users").document(user.getUid())

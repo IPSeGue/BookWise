@@ -60,7 +60,7 @@ public class GoogleBookAPI {
                                 apiBook.getDay(),
                                 apiBook.getMonth(),
                                 apiBook.getYear(),
-                                apiBook.getImageURL() // Assuming you have an imageID or URL from the API
+                                apiBook.getImageURL()// Assuming you have an imageID or URL from the API
                         );
                         bookitems.add(book);
                     }

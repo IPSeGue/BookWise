@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Bookitem implements Parcelable, Serializable {
-    private String title, author, genres, summary, imageURL;
+    private String title, author, genres, summary, imageURL, bookId;
     private int rating, day, month, year;
     private boolean isCollected;
     private ArrayList<Reviews> reviews;
@@ -28,6 +28,10 @@ public class Bookitem implements Parcelable, Serializable {
         this.imageURL = imageURL;
         this.isCollected = false;
         this.reviews = new ArrayList<>();
+    }
+
+    public String getBookId(){
+        return bookId;
     }
 
     public boolean isCollected() {
@@ -76,6 +80,10 @@ public class Bookitem implements Parcelable, Serializable {
 
     public String getDate() {
         return month + "/" + day + "/" + year;
+    }
+
+    public void setDocument(String documentId) {
+        this.bookId = documentId;
     }
 
     public ArrayList<Reviews> getReviews() {

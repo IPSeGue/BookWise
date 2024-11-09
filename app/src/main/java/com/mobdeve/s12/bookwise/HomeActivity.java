@@ -10,6 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,28 +29,29 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
     private List<Bookitem> bookitemList;
     private List<Bookitem> collectionBookitemList;
 
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Initialize RecyclerView
-        initViews();
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        userId = auth.getCurrentUser().getUid();
 
         bookitemList = DataGeneratorBooks.getInstance().getBookList();
-
         if (bookitemList == null) {
             bookitemList = new ArrayList<>(); // Initialize as empty if null
         }
 
-        rv_home_item.setLayoutManager(new LinearLayoutManager(this));
-
-        // Initialize data
         collectionBookitemList = new ArrayList<>();
 
-        // Set Adapter
-        activityHomeAdapter = new HomeActivityAdapter(bookitemList, this);
-        rv_home_item.setAdapter(activityHomeAdapter);
+        // Initialize RecyclerView
+        initViews();
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
@@ -55,13 +62,33 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
     }
 
     @Override
-    public void onCollectClick(Bookitem item, boolean isCollected) {
+    public void onCollectClick(Bookitem item, boolean isCollected, String userId) {
         if (isCollected) {
-            if (!collectionBookitemList.contains(item)) {
-                collectionBookitemList.add(item);
-            }
+            // Add book to Firestore
+            db.collection("users").document(userId)
+                    .collection("bookCollection").document(item.getBookId()) // Ensure item has a unique ID
+                    .set(item)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(HomeActivity.this, "Book added to collection", Toast.LENGTH_SHORT).show();
+                        if (!collectionBookitemList.contains(item)) {
+                            collectionBookitemList.add(item);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(HomeActivity.this, "Failed to add book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         } else {
-            collectionBookitemList.remove(item);
+            // Remove book from Firestore
+            db.collection("users").document(userId)
+                    .collection("bookCollection").document(item.getBookId())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(HomeActivity.this, "Book removed from collection", Toast.LENGTH_SHORT).show();
+                        collectionBookitemList.remove(item);
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(HomeActivity.this, "Failed to remove book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         }
     }
 
@@ -73,6 +100,10 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
         btnGoal = findViewById(R.id.h_goal_btn);
         userProfile = findViewById(R.id.h_userProfile);
         rv_home_item = findViewById(R.id.rv_home_item);
+
+        rv_home_item.setLayoutManager(new LinearLayoutManager(this));
+        activityHomeAdapter = new HomeActivityAdapter(bookitemList, this, userId);
+        rv_home_item.setAdapter(activityHomeAdapter);
     }
 
     public void homePage(){

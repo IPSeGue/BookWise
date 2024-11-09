@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -101,41 +102,39 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkCredentials(String email, String password) {
-        // Get Firestore instance
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
 
-        // Query the users collection for the email
-        firestore.collection("users")
-                .whereEqualTo("email", email) // Match the email
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
-                        // Check if we found a matching user
-                        DocumentSnapshot db = task.getResult().getDocuments().get(0);
-                        String storedHashedPassword = db.getString("password"); // The hashed password
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Login successful, get the UID of the logged-in user
+                        String userId = auth.getCurrentUser().getUid();
 
-                        //password.equals(storedHashedPassword)
-
-                        // Check if the entered password matches the stored hashed password
-                        if (BCrypt.checkpw(password, storedHashedPassword)) {
-                            // Password is correct, proceed with login
-                            Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
-                            // Call method to load the next activity
-                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);  // Start the HomeActivity
-                            finish();
-                        } else {
-                            // Incorrect password
-                            Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-                        }
+                        // Optional: Get user data from Firestore, if needed
+                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                        firestore.collection("users").document(userId).get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        // User data exists, proceed with the next activity
+                                        Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        // Handle case where user document doesn't exist
+                                        Toast.makeText(LoginActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(LoginActivity.this, "Error fetching data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
                     } else {
-                        // Email not found in Firestore
-                        Toast.makeText(LoginActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                        // Login failed
+                        Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Error occurred while querying Firestore
-                    Toast.makeText(LoginActivity.this, "Error fetching data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Authentication error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 

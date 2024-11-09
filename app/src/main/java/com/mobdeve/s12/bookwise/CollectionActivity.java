@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,26 +30,27 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
     private HomeActivityAdapter activityHomeAdapter;
     private List<Bookitem> collectedItems;
 
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
 
-        // Initialize RecyclerView
-        initViews();
-        rv_home_item.setLayoutManager(new LinearLayoutManager(this));
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-
-        collectedItems = DataGeneratorBooks.getInstance().getCollectedBookitemList();
+        userId = auth.getCurrentUser().getUid();
+        checkUserCollection(userId);
 
         if (collectedItems == null) {
             collectedItems = new ArrayList<>(); // Initialize as empty if null
         }
 
-        // Set Adapter
-        activityHomeAdapter = new HomeActivityAdapter(collectedItems, this);
-        rv_home_item.setAdapter(activityHomeAdapter);
-
+        // Initialize RecyclerView
+        initViews();
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
@@ -52,6 +58,38 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
         userProfile.setOnClickListener(v -> userProfilePage());
+    }
+
+    private void checkUserCollection(String userId) {
+        // Query Firestore for the user's personal book collection
+        db.collection("users").document(userId).collection("bookCollection")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        // User collection exists, populate bookitemList with user's books
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Bookitem book = document.toObject(Bookitem.class);
+                            collectedItems.add(book);
+                        }
+                        activityHomeAdapter.notifyDataSetChanged(); // Update adapter with user's collection
+                        Toast.makeText(this, "Loaded your book collection.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // No personal collection found; load default book list
+                        loadDefaultBooks();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error loading books: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void loadDefaultBooks() {
+        // Load books from the DataGeneratorBooks singleton if no user collection exists
+        collectedItems = new ArrayList<>();
+        activityHomeAdapter = new HomeActivityAdapter(collectedItems, this, userId);
+        rv_home_item.setAdapter(activityHomeAdapter);
+        activityHomeAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "Loaded default book list.", Toast.LENGTH_SHORT).show();
     }
 
     public void initViews(){
@@ -62,10 +100,15 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
         btnGoal = findViewById(R.id.h_goal_btn);
         userProfile = findViewById(R.id.h_userProfile);
         rv_home_item = findViewById(R.id.rv_home_item);
+
+        // Set Adapter
+        rv_home_item.setLayoutManager(new LinearLayoutManager(this));
+        activityHomeAdapter = new HomeActivityAdapter(collectedItems, this, userId);
+        rv_home_item.setAdapter(activityHomeAdapter);
     }
 
     @Override
-    public void onCollectClick(Bookitem item, boolean isCollected) {
+    public void onCollectClick(Bookitem item, boolean isCollected, String userId) {
         // Update collection status as needed
         item.setCollected(isCollected);
         // You can also update the collectedItems list here if needed
