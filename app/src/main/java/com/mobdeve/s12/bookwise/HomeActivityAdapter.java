@@ -1,6 +1,7 @@
 package com.mobdeve.s12.bookwise;
 
 import android.graphics.ColorSpace;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -48,7 +50,13 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
         holder.h_ActivityAuthor.setText("By: "+ book.getAuthor());
         holder.h_ActivityRating.setRating(book.getRating());
         holder.h_CollectButton.setChecked(book.isCollected());
-        //holder.h_MarkAsRead.setOnClickListener();
+        holder.h_MarkAsRead.setChecked(book.isMarked());
+
+        if (book.isMarked()) {
+            holder.h_MarkAsRead.setBackgroundResource(R.drawable.unmark_as_read);
+        } else {
+            holder.h_MarkAsRead.setBackgroundResource(R.drawable.mark_as_read);
+        }
 
         if (book.isCollected()) {
             holder.h_CollectButton.setBackgroundResource(R.drawable.on_book_mark);
@@ -81,11 +89,54 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
                     holder.h_CollectButton.setBackgroundResource(R.drawable.off_book_mark);
                 });
 
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .collection("bookMark")
+                .document(book.getBookId())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    boolean isMarked = documentSnapshot.exists(); // Toggle button based on existence
+                    holder.h_MarkAsRead.setChecked(isMarked);
+                    holder.h_MarkAsRead.setBackgroundResource(isMarked ? R.drawable.unmark_as_read : R.drawable.mark_as_read);
+                    book.setMarked(isMarked); // Update the collection state of the book in the list
+                })
+                .addOnFailureListener(e -> {
+                    // Handle errors (optional)
+                    holder.h_MarkAsRead.setChecked(false); // Default to not collected on error
+                    holder.h_MarkAsRead.setBackgroundResource(R.drawable.mark_as_read);
+                });
+
         holder.h_CollectButton.setOnClickListener(v -> {
             boolean isCollected = holder.h_CollectButton.isChecked();
             collectClickListener.onCollectClick(book, isCollected, userId);
             book.setCollected(isCollected); // Update the collection state of the book
             holder.h_CollectButton.setBackgroundResource(isCollected ? R.drawable.on_book_mark : R.drawable.off_book_mark);
+        });
+
+        holder.h_MarkAsRead.setOnClickListener(v -> {
+            boolean isMarked = holder.h_MarkAsRead.isChecked();
+            collectClickListener.onMarkBookClick(book, isMarked, userId);
+            book.setMarked(isMarked); // Update the collection state of the book
+            holder.h_MarkAsRead.setBackgroundResource(isMarked ? R.drawable.unmark_as_read : R.drawable.mark_as_read);
+            // Reference to the user's Firestore document
+            DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(userId);
+
+            // Fetch the current numBookRead and update it
+            userRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    Long numBookRead = documentSnapshot.getLong("numBookRead");
+                    if (numBookRead == null) numBookRead = 0L; // Set to 0 if null
+
+                    // Increment or decrement based on toggle state
+                    long updatedCount = isMarked ? numBookRead + 1 : numBookRead - 1;
+
+                    // Update Firestore with the new count
+                    userRef.update("numBookRead", updatedCount)
+                            .addOnSuccessListener(aVoid -> Log.d("Firestore", "numBookRead updated successfully"))
+                            .addOnFailureListener(e -> Log.e("Firestore", "Error updating numBookRead", e));
+                }
+            }).addOnFailureListener(e -> Log.e("Firestore", "Error fetching user document", e));
         });
 
         holder.itemView.setOnClickListener(v -> {
@@ -110,8 +161,7 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
         ImageView h_ActivityImage;
         TextView h_ActivityTitle, h_ActivityAuthor;
         RatingBar h_ActivityRating;
-        ToggleButton h_CollectButton;
-        Button h_MarkAsRead;
+        ToggleButton h_CollectButton, h_MarkAsRead;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,11 +170,13 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
             h_ActivityAuthor = itemView.findViewById(R.id.hi_author);
             h_ActivityRating = itemView.findViewById(R.id.hi_rating);
             h_CollectButton = itemView.findViewById(R.id.hi_collect);
+            h_MarkAsRead = itemView.findViewById(R.id.hi_markAsRead);
         }
     }
 
     public interface OnCollectClickListener {
         void onCollectClick(Bookitem item, boolean isCollected, String userId);
+        void onMarkBookClick(Bookitem item, boolean isCollected, String userId);
     }
 }
 

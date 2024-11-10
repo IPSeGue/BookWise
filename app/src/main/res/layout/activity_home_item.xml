@@ -51,11 +51,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
+            <ToggleButton
                 android:id="@+id/hi_markAsRead"
-                android:layout_width="wrap_content"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:text="Mark as Read" />
+                android:background="@drawable/mark_as_read"
+                android:text="Mark as Read"
+                android:textOff="Mark as Read"
+                android:textOn="Mark as Read" />
+
 
             <Space
                 android:layout_width="match_parent"

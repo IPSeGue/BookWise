@@ -29,6 +29,7 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
     private HomeActivityAdapter activityHomeAdapter;
     private List<Bookitem> bookitemList;
     private List<Bookitem> collectionBookitemList;
+    private List<Bookitem> markAsReadBookList;
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -49,6 +50,10 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
         bookitemList = DataGeneratorBooks.getInstance().getBookList();
         if (bookitemList == null) {
             bookitemList = new ArrayList<>(); // Initialize as empty if null
+        }
+
+        if (markAsReadBookList == null) {
+            markAsReadBookList = new ArrayList<>(); // Initialize as empty if null
         }
 
         collectionBookitemList = new ArrayList<>();
@@ -88,6 +93,36 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(HomeActivity.this, "Book removed from collection", Toast.LENGTH_SHORT).show();
                         collectionBookitemList.remove(item);
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(HomeActivity.this, "Failed to remove book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+
+    public void onMarkBookClick(Bookitem item, boolean isMarked, String userId) {
+        if (isMarked) {
+            // Add book to Firestore
+            db.collection("users").document(userId)
+                    .collection("bookMark").document(item.getBookId()) // Ensure item has a unique ID
+                    .set(item)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(HomeActivity.this, "Book added to Mark As Read", Toast.LENGTH_SHORT).show();
+                        if (!markAsReadBookList.contains(item)) {
+                            markAsReadBookList.add(item);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(HomeActivity.this, "Failed to add book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            // Remove book from Firestore
+            db.collection("users").document(userId)
+                    .collection("bookMark").document(item.getBookId())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(HomeActivity.this, "Book removed from Mark As Read", Toast.LENGTH_SHORT).show();
+                        markAsReadBookList.remove(item);
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(HomeActivity.this, "Failed to remove book: " + e.getMessage(), Toast.LENGTH_SHORT).show();

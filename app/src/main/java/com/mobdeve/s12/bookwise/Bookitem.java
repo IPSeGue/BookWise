@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Bookitem implements Parcelable, Serializable {
     private String title, author, genres, summary, imageURL, bookId;
     private int rating, day, month, year;
-    private boolean isCollected;
+    private boolean isCollected, isMarked;
     private ArrayList<Reviews> reviews;
 
     public Bookitem() {
@@ -38,8 +38,16 @@ public class Bookitem implements Parcelable, Serializable {
         return isCollected;
     }
 
+    public boolean isMarked() {
+        return isMarked;
+    }
+
     public void setCollected(boolean collected) {
         isCollected = collected;
+    }
+
+    public void setMarked(boolean marked) {
+        isMarked = marked;
     }
 
     public String getTitle() {
