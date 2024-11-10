@@ -28,7 +28,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private Button btnGoalSetting, btnSetting, btnLogOut;
 
-    private TextView fullName, email;
+    private TextView fullName, email, bookRead, bookGoal, currentProgress;
     private ImageView profileImage;
 
     private FirebaseFirestore db;
@@ -71,6 +71,9 @@ public class UserProfileActivity extends AppCompatActivity {
         fullName = findViewById(R.id.up_fullName);
         email = findViewById(R.id.up_email);
         profileImage = findViewById(R.id.up_image);
+        bookRead = findViewById(R.id.up_bookRead);
+        bookGoal = findViewById(R.id.up_bookGoal);
+        currentProgress = findViewById(R.id.up_currentProgress);
     }
 
     private void loadUserData() {
@@ -82,10 +85,16 @@ public class UserProfileActivity extends AppCompatActivity {
                     // Get and display the full name and email
                     String name = documentSnapshot.getString("fullName");
                     String userEmail = documentSnapshot.getString("email");
+                    Long userNumGoal = documentSnapshot.getLong("numGoal");
+                    String timeFrame = documentSnapshot.getString("perTimeFrame");
+                    Long userBookRead = documentSnapshot.getLong("numBookRead");
                     String imageUrl = documentSnapshot.getString("imageUrl"); // Assume profileImageUrl field
 
                     fullName.setText(name);
                     email.setText(userEmail);
+                    bookRead.setText("Total Books Read: \n" + userBookRead);
+                    bookGoal.setText("Reading Goal: \n" + userNumGoal + " Books \n" + timeFrame);
+                    currentProgress.setText("Current Progress: \n" + userBookRead + " Books As \n of Now" );
                     if (imageUrl != null && imageUrl.equals("default")){
                         profileImage.setImageResource(R.drawable.user_profile);
                     }

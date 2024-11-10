@@ -51,10 +51,10 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/hi_review"
+                android:id="@+id/hi_markAsRead"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Button" />
+                android:text="Mark as Read" />
 
             <Space
                 android:layout_width="wrap_content"

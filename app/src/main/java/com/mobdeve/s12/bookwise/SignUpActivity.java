@@ -109,6 +109,9 @@ public class SignUpActivity extends AppCompatActivity {
         userData.put("password", hashPassword);
         userData.put("verifyPassword", password);
         userData.put("imageUrl", "default");
+        userData.put("numBookRead", 0);
+        userData.put("numGoal", 0);
+        userData.put("perTimeFrame", "");
 
         // Save to Firestore
         db.collection("users").document(user.getUid())
