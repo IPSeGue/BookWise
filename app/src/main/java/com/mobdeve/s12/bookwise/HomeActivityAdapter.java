@@ -4,6 +4,7 @@ import android.graphics.ColorSpace;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -47,6 +48,13 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
         holder.h_ActivityAuthor.setText("By: "+ book.getAuthor());
         holder.h_ActivityRating.setRating(book.getRating());
         holder.h_CollectButton.setChecked(book.isCollected());
+        //holder.h_MarkAsRead.setOnClickListener();
+
+        if (book.isCollected()) {
+            holder.h_CollectButton.setBackgroundResource(R.drawable.on_book_mark);
+        } else {
+            holder.h_CollectButton.setBackgroundResource(R.drawable.off_book_mark);
+        }
 
         Glide.with(holder.itemView.getContext())
                 .load(book.getImageURL())
@@ -64,21 +72,25 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
                 .addOnSuccessListener(documentSnapshot -> {
                     boolean isCollected = documentSnapshot.exists(); // Toggle button based on existence
                     holder.h_CollectButton.setChecked(isCollected);
+                    holder.h_CollectButton.setBackgroundResource(isCollected ? R.drawable.on_book_mark : R.drawable.off_book_mark);
                     book.setCollected(isCollected); // Update the collection state of the book in the list
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors (optional)
                     holder.h_CollectButton.setChecked(false); // Default to not collected on error
+                    holder.h_CollectButton.setBackgroundResource(R.drawable.off_book_mark);
                 });
 
         holder.h_CollectButton.setOnClickListener(v -> {
             boolean isCollected = holder.h_CollectButton.isChecked();
             collectClickListener.onCollectClick(book, isCollected, userId);
             book.setCollected(isCollected); // Update the collection state of the book
+            holder.h_CollectButton.setBackgroundResource(isCollected ? R.drawable.on_book_mark : R.drawable.off_book_mark);
         });
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), BookDetailActivity.class);
+            intent.putExtra("bookId", book.getBookId());
             intent.putExtra("title", book.getTitle());
             intent.putExtra("author", book.getAuthor());
             intent.putExtra("genres", book.getGenres());
@@ -99,6 +111,7 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeActivityAdapte
         TextView h_ActivityTitle, h_ActivityAuthor;
         RatingBar h_ActivityRating;
         ToggleButton h_CollectButton;
+        Button h_MarkAsRead;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -1,31 +1,51 @@
 package com.mobdeve.s12.bookwise;
 
 public class Reviews {
-    private int id;
-    private Users user;
-    private Bookitem book;
-    private String review;
-    private int rating;
+    private String userId;
+    private String bookId;
+    private String content;
+    private float rating;
 
-    public Reviews(int id, Users user, Bookitem book, String review, int rating) {
-        this.id = id;
-        this.user = user;
-        this.book = book;
-        this.review = review;
+    public Reviews() {
+        // Empty constructor for Firestore
+    }
+
+    public Reviews(String userId, String bookId, String content, float rating) {
+        this.userId = userId;
+        this.bookId = bookId;
+        this.content = content;
         this.rating = rating;
     }
 
-    public Users getUser(){
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-
-
-    public String getComment(){
-        return review;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getRating(){
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public float getRating() {
         return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 }

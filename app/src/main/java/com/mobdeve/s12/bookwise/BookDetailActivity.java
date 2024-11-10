@@ -15,7 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookDetailActivity extends AppCompatActivity {
@@ -30,49 +34,38 @@ public class BookDetailActivity extends AppCompatActivity {
 
     private Bookitem currentBook;
     private BookDetailActivityAdapter activityBookDetailAdapter;
-    private List<Bookitem> bookitemList;
-    private List<Bookitem> collectionBookitemList;
+    private List<Reviews> reviewList;
+    private Reviews reviews;
+
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    String userId;
+    String bookId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
 
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        userId = auth.getCurrentUser().getUid();
+
+        reviewList = new ArrayList<>();
         // Initialize RecyclerView
+
+        fetchReviews();
+
         initViews();
-        rv_review_item.setLayoutManager(new LinearLayoutManager(this));
         data();
-
-//        // Initialize data
-//        bookitemList = new ArrayList<>();
-//        collectionBookitemList = new ArrayList<>();
-//        bookitemList.add(new Bookitem("Sum", "Name", "Roman", "This book is all about" ,5 , 14, 3,2020, R.drawable.google));
-//        bookitemList.add(new Bookitem("Minus", "Name", "Roman", "This book is all about" ,1 , 14, 3,2020, R.drawable.logo));
-//        bookitemList.add(new Bookitem("Multiply", "Name", "Roman", "This book is all about" ,3 , 14, 3,2020, R.drawable.x));
-//
-        // Set Adapter
-        //activityBookDetailAdapter = new BookDetailActivityAdapter(bookitemList, this);
-        rv_review_item.setAdapter(activityBookDetailAdapter);
-
-
-
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
         btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
-        //btnSubmit.setOnClickListener(v ->);
-    }
-
-    public void onCollectClick(int position, boolean isCollected) {
-        Bookitem item = bookitemList.get(position);
-        item.setCollected(isCollected);  // Update the collected status in the model
-
-        if (isCollected) {
-            collectionBookitemList.add(item);  // Add to collected list
-        } else {
-            collectionBookitemList.remove(item);  // Remove from collected list
-        }
+        btnSubmit.setOnClickListener(v -> submitReview());
     }
 
     public void initViews(){
@@ -93,10 +86,16 @@ public class BookDetailActivity extends AppCompatActivity {
         bookGenres = findViewById(R.id.bd_place);
         bookDate = findViewById(R.id.bd_date);
         bookSummary = findViewById(R.id.bd_summary);
+
+        rv_review_item.setLayoutManager(new LinearLayoutManager(this));
+        activityBookDetailAdapter = new BookDetailActivityAdapter(reviewList);
+        rv_review_item.setAdapter(activityBookDetailAdapter);
     }
 
     public void data(){
         Intent intent = getIntent();
+        bookId = intent.getStringExtra("bookId");
+        System.out.println(bookId);
         String title = intent.getStringExtra("title");
         String author = intent.getStringExtra("author");
         String genres = intent.getStringExtra("genres");
@@ -114,6 +113,68 @@ public class BookDetailActivity extends AppCompatActivity {
                 .placeholder(R.drawable.google)  // Optional: a placeholder while the image loads
                 .error(R.drawable.logo)  // Optional: an error image if loading fails
                 .into(bookImageID);
+    }
+
+    public void submitReview(){
+        // Get the content from EditText
+        String reviewContent = content.getText().toString().trim();
+        // Get the rating from RatingBar (it returns a float)
+        float rating = ratingResult.getRating();
+
+        // Check if the content is empty or rating is not set
+        if (reviewContent.isEmpty() || rating == 0) {
+            Toast.makeText(this, "Please provide a valid review and rating", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Reviews newReview = new Reviews(userId, bookId, reviewContent, rating);
+
+        db.collection("reviews")
+                .add(newReview)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(BookDetailActivity.this, "Review submitted successfully!", Toast.LENGTH_SHORT).show();
+                    // Optionally, you can navigate back or update the UI
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(BookDetailActivity.this, "Error submitting review", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    public void fetchReviews() {
+        // Get the book ID from the intent (it was passed when navigating to BookDetailActivity)
+        Intent intent = getIntent();
+        String bookId = intent.getStringExtra("bookId");
+
+        // Fetch reviews for the current book
+        db.collection("reviews")
+                .whereEqualTo("bookId", bookId) // Filter reviews by bookId
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        // Loop through the query result and create Review objects
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            Reviews review = document.toObject(Reviews.class);
+                            reviewList.add(review);
+                        }
+                        // Set up the RecyclerView adapter
+                        activityBookDetailAdapter.notifyDataSetChanged();
+                    } else {
+                        loadDefaultReview();
+                        // No reviews found for the book
+                        Toast.makeText(BookDetailActivity.this, "No reviews found for this book", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(BookDetailActivity.this, "Error fetching reviews", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void loadDefaultReview() {
+        // Load books from the DataGeneratorBooks singleton if no user collection exists
+        reviewList = new ArrayList<>();
+        activityBookDetailAdapter = new BookDetailActivityAdapter(reviewList);
+        rv_review_item.setAdapter(activityBookDetailAdapter);
+        activityBookDetailAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "Loaded default book list.", Toast.LENGTH_SHORT).show();
     }
 
     public void homePage(){
