@@ -135,8 +135,8 @@ public class SignUpActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        if (re_email.isEmpty() || !isEmailValid(re_email)) {
-            errorMessages.add("Use your DLSU email.");
+        if (re_email.isEmpty()) {
+            errorMessages.add("Email cannot be empty");
             isValid = false;
         }
 
@@ -155,10 +155,6 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         return isValid;
-    }
-
-    private boolean isEmailValid(String email) {
-        return email.endsWith("@dlsu.edu.ph");
     }
 
     private void showErrorDialog(List<String> errorMessages) {
