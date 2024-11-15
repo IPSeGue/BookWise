@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-
+    // AndroidX and Material
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -54,23 +54,29 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    // Retrofit dependencies for API integration
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
 
-    // For image loading with Glide
-    implementation (libs.glide)
-    implementation(libs.firebase.storage)
+    // Retrofit for API integration
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    // Glide for image loading
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
+
+    // Firebase
+    implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
     implementation(libs.firebase.database)
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.auth)
-    implementation (libs.play.services.auth)
-    
-    implementation (libs.jbcrypt)
 
-    annotationProcessor (libs.compiler)
+    // Google Sign-In
+    implementation(libs.play.services.auth)
 
+    // BCrypt
+    implementation(libs.jbcrypt)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,5 +84,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 }
