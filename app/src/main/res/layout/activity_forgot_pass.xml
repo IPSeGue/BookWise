@@ -31,7 +31,7 @@
         android:autofillHints=""
         android:background="#F6F6F6"
         android:ems="10"
-        android:hint="Password"
+        android:hint="Enter New Password"
         android:inputType="textPassword"
         android:minHeight="48dp"
         android:padding="10dp" />
@@ -44,7 +44,7 @@
         android:autofillHints=""
         android:background="#F6F6F6"
         android:ems="10"
-        android:hint="Confirm Password"
+        android:hint="Confirm New Password"
         android:inputType="textPassword"
         android:minHeight="48dp"
         android:padding="10dp" />
