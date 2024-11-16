@@ -76,6 +76,19 @@ dependencies {
     // BCrypt
     implementation(libs.jbcrypt)
 
+    // Firebase Authentication
+    implementation(libs.firebase.auth.vlatestversion)
+
+    // Google Sign-In
+    implementation(libs.play.services.auth.vlatestversion)
+
+    // Facebook SDK
+    implementation(libs.facebook.login)
+
+    // Twitter SDK
+    implementation(libs.twitter.core)
+    implementation(libs.twitter)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

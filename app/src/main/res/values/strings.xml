@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">bookwise</string>
+    <string name="default_web_client_id">816873376665-7qubl8s3p03j0uml5vbesdsvpkps8ugp.apps.googleusercontent.com</string>
+    <string name="twitter_consumer_key">YOUR_TWITTER_KEY</string>
+    <string name="twitter_consumer_secret">YOUR_TWITTER_SECRET</string>
+
 </resources>

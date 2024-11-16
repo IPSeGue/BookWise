@@ -2,6 +2,8 @@
 agp = "8.7.2"
 bcprovJdk15on = "1.68"
 converterGson = "2.9.0"
+facebookLogin = "latest_version"
+firebaseAuthVersion = "latest_version"
 glide = "4.12.0"
 jbcrypt = "0.4"
 kotlin = "2.0.0"
@@ -23,12 +25,17 @@ firebaseDatabase = "21.0.0"
 firebaseAnalytics = "22.1.2"
 firebaseAuth = "23.1.0"
 playServicesAuth = "21.2.0"
+playServicesAuthVersion = "latest_version"
+twitterCore = "3.3.0"
+twitter = "3.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 bcprov-jdk15on = { module = "com.github.bcrypt:bcprov-jdk15on", version.ref = "bcprovJdk15on" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
+firebase-auth-vlatestversion = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuthVersion" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -49,12 +56,15 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+play-services-auth-vlatestversion = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+twitter = { module = "com.twitter.sdk.android:twitter", version.ref = "twitter" }
+twitter-core = { module = "com.twitter.sdk.android:twitter-core", version.ref = "twitterCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
