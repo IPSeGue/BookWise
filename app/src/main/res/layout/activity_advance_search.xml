@@ -45,7 +45,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/text_box"
                 android:ems="10"
-                android:hint="Sherlock Holmes"
+                android:hint="Who wrote it?"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:padding="10dp" />
@@ -160,10 +160,10 @@
 
         <Button
             android:id="@+id/as_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="Search" />
+            android:text="Search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

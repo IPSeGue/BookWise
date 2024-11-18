@@ -2,14 +2,12 @@ package com.mobdeve.s12.bookwise;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,85 +16,99 @@ import java.util.List;
 
 public class AdvanceSearchActivity extends AppCompatActivity {
 
-    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
-    private Button btnNormalSearch;
+    private EditText etAuthor, etGenre, etPublicationDate;
+    private Button btnAdvance;
+    private RecyclerView rvAdvancedSearchResults;
 
     private SearchActivityAdapter activitySearchAdapter;
     private List<Bookitem> bookitemList;
-    private List<Bookitem> collectionBookitemList;
+
+    private GoogleBookAPI googleBookAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advance_search);
 
-        // Initialize RecyclerView
         initViews();
 
-        collectionBookitemList = new ArrayList<>();
+        bookitemList = new ArrayList<>();
+        activitySearchAdapter = new SearchActivityAdapter(bookitemList, this::onCollectClick);
 
+        // Set RecyclerView LayoutManager and Adapter after initialization
+        rvAdvancedSearchResults.setLayoutManager(new LinearLayoutManager(this));
+        rvAdvancedSearchResults.setAdapter(activitySearchAdapter);
 
-        btnHome.setOnClickListener(v -> homePage());
-        btnSearch.setOnClickListener(v -> searchPage());
-        btnAdd.setOnClickListener(v -> addPage());
-        btnCollection.setOnClickListener(v -> collectionPage());
-        btnGoal.setOnClickListener(v -> goalPage());
-        btnNormalSearch.setOnClickListener(v -> normalSearch());
+        googleBookAPI = new GoogleBookAPI();
+
+        // Add log to check if button is being clicked
+        btnAdvance.setOnClickListener(v -> {
+            Log.d("AdvanceSearch", "Advance Search button clicked!");
+
+            String author = etAuthor.getText().toString().trim();
+            String genre = etGenre.getText().toString().trim();
+            String publicationDate = etPublicationDate.getText().toString().trim();
+
+            StringBuilder queryBuilder = new StringBuilder();
+            if (!author.isEmpty()) {
+                queryBuilder.append("+inauthor:").append(author);
+            }
+            if (!genre.isEmpty()) {
+                queryBuilder.append("+subject:").append(genre);
+            }
+            if (!publicationDate.isEmpty()) {
+                queryBuilder.append("+inpublisher:").append(publicationDate);
+            }
+
+            String query = queryBuilder.toString();
+            Log.d("AdvanceSearch", "Constructed query: " + query);
+
+            if (query.isEmpty()) {
+                Toast.makeText(this, "Please enter at least one filter!", Toast.LENGTH_SHORT).show();
+                Log.d("AdvanceSearch", "Query is empty!");
+            } else {
+                Log.d("AdvanceSearch", "Performing advanced search...");
+                performAdvancedSearch(query);
+            }
+        });
     }
 
-    public void onCollectClick(int position, boolean isCollected) {
-        Bookitem item = bookitemList.get(position);
-        item.setCollected(isCollected);  // Update the collected status in the model
+    private void performAdvancedSearch(String query) {
+        Log.d("AdvanceSearch", "Performing advanced search with query: " + query);
 
-        if (isCollected) {
-            collectionBookitemList.add(item);  // Add to collected list
-        } else {
-            collectionBookitemList.remove(item);  // Remove from collected list
-        }
+        googleBookAPI.fetchBooks(query, new GoogleBookAPI.OnBooksFetchedListener() {
+            @Override
+            public void onBooksFetched(List<Bookitem> books) {
+                Log.d("AdvanceSearch", "Books fetched: " + books.size());
+
+                if (books.isEmpty()) {
+                    Toast.makeText(AdvanceSearchActivity.this, "No results found!", Toast.LENGTH_SHORT).show();
+                    Log.d("AdvanceSearch", "No books found!");
+                } else {
+                    bookitemList.clear();
+                    bookitemList.addAll(books);
+                    activitySearchAdapter.notifyDataSetChanged();
+                    Log.d("AdvanceSearch", "Books added to the list.");
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e("AdvanceSearch", "Error: " + errorMessage);
+                Toast.makeText(AdvanceSearchActivity.this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    public void initViews(){
-        btnHome = findViewById(R.id.h_home_btn);
-        btnSearch = findViewById(R.id.h_search_btn);
-        btnAdd = findViewById(R.id.h_add_btn);
-        btnCollection = findViewById(R.id.h_collection_btn);
-        btnGoal = findViewById(R.id.h_goal_btn);
-        btnNormalSearch = findViewById(R.id.as_search);
+    private void initViews() {
+        etAuthor = findViewById(R.id.as_author);
+        etGenre = findViewById(R.id.as_genres);
+        etPublicationDate = findViewById(R.id.as_publishDay);
+        btnAdvance = findViewById(R.id.s_advance);
+        rvAdvancedSearchResults = findViewById(R.id.rv_search_item);  // Correct ID used here
     }
 
-    public void homePage(){
-        Intent intent = new Intent(AdvanceSearchActivity.this, HomeActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void searchPage(){
-        Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void addPage(){
-        Intent intent = new Intent(AdvanceSearchActivity.this, AdvanceSearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void collectionPage(){
-        Intent intent = new Intent(AdvanceSearchActivity.this, CollectionActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void goalPage(){
-        Intent intent = new Intent(AdvanceSearchActivity.this, GoalSettingActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void normalSearch(){
-        Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+    private void onCollectClick(Bookitem bookitem, boolean isCollected) {
+        // Handle "add to collection" logic if needed
     }
 }
