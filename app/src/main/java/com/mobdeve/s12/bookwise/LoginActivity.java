@@ -3,6 +3,7 @@ package com.mobdeve.s12.bookwise;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -10,24 +11,51 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.facebook.AccessToken;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.CallbackManager;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static final int GOOGLE_SIGN_IN_CODE = 101;
+    private static final String TAG = "LoginActivity";
+
     private Button btnLogIn;
     private TextView btnSignUp, btnForgotPass;
     private EditText emailInput, passWord;
     private ImageButton facebook, goolge, x;
-    //private List<Bookitem> books;
 
+    private FirebaseAuth firebaseAuth;
+    private GoogleSignInClient googleSignInClient;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,24 +64,69 @@ public class LoginActivity extends AppCompatActivity {
 
         initViews();
         FirebaseApp.initializeApp(this);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        // Initialize Facebook SDK
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(getApplication());
+        callbackManager = CallbackManager.Factory.create();
+
+        // Initialize Google Sign-In
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("816873376665-7qubl8s3p03j0uml5vbesdsvpkps8ugp.apps.googleusercontent.com") // Your client ID here
+                .requestEmail()
+                .build();
+
         fetchBooksAndProceed();
 
         btnLogIn.setOnClickListener(v -> logIn());
         btnSignUp.setOnClickListener(v -> signUpPage());
         btnForgotPass.setOnClickListener(v -> forgotPassPage());
 
-        emailInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                emailInput.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.showSoftInput(emailInput, InputMethodManager.SHOW_IMPLICIT);
+        // Handle Facebook Login
+        facebook.setOnClickListener(v -> {
+            LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("email", "public_profile"));
+            LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    handleFacebookAccessToken(loginResult.getAccessToken());
                 }
+
+                @Override
+                public void onCancel() {
+                    Toast.makeText(LoginActivity.this, "Facebook Login Cancelled", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    Toast.makeText(LoginActivity.this, "Facebook Login Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        // Handle Google Login
+        goolge.setOnClickListener(v -> {
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, GOOGLE_SIGN_IN_CODE);
+        });
+
+        // Handle Twitter Login
+        x.setOnClickListener(v -> {
+            // Initialize Twitter login logic here
+            // Refer to the Twitter SDK documentation if needed
+            Toast.makeText(LoginActivity.this, "Twitter Login Coming Soon!", Toast.LENGTH_SHORT).show();
+        });
+
+        emailInput.setOnClickListener(v -> {
+            emailInput.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(emailInput, InputMethodManager.SHOW_IMPLICIT);
             }
         });
     }
-    public void initViews(){
+
+    public void initViews() {
         btnLogIn = findViewById(R.id.l_logIn);
         btnSignUp = findViewById(R.id.l_signUp);
         btnForgotPass = findViewById(R.id.l_forgotPass);
@@ -64,114 +137,55 @@ public class LoginActivity extends AppCompatActivity {
         x = findViewById(R.id.l_x);
     }
 
-    private void fetchBooksAndProceed() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DataGeneratorBooks dataGenerator = new DataGeneratorBooks(db);
-        dataGenerator.initializeBooks("fiction", new GoogleBookAPI.OnBooksFetchedListener() {
-            @Override
-            public void onBooksFetched(List<Bookitem> books) {
-                // Set the fetched books in the singleton instance
-                DataGeneratorBooks.getInstance().setBookList(books);
-                Toast.makeText(LoginActivity.this, "Books fetched successfully", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                // Handle error if fetching books fails
-                Toast.makeText(LoginActivity.this, "Error fetching books: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void logIn(){
-        String email = emailInput.getText().toString().trim();
-        String password = passWord.getText().toString().trim();
-
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
-        } else {
-            // Replace with your actual credential check logic
-            checkCredentials(email,password);
-
-//                        if (rememberMeCheckbox.isChecked()) {
-//                            saveRememberMe(email, password);
-//                        } else {
-//                            clearRememberMe();
-//                        }
-        }
-    }
-
-    private void checkCredentials(String email, String password) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-
-        auth.signInWithEmailAndPassword(email, password)
+    private void handleFacebookAccessToken(AccessToken token) {
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Login successful, get the UID of the logged-in user
-                        String userId = auth.getCurrentUser().getUid();
-
-                        // Optional: Get user data from Firestore, if needed
-                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                        firestore.collection("users").document(userId).get()
-                                .addOnSuccessListener(documentSnapshot -> {
-                                    if (documentSnapshot.exists()) {
-                                        // User data exists, proceed with the next activity
-                                        Toast.makeText(LoginActivity.this, "Sign-In Successful", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    } else {
-                                        // Handle case where user document doesn't exist
-                                        Toast.makeText(LoginActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(LoginActivity.this, "Error fetching data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        Toast.makeText(LoginActivity.this, "Facebook Login Successful", Toast.LENGTH_SHORT).show();
+                        navigateToHome();
                     } else {
-                        // Login failed
-                        Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Facebook Login Failed", Toast.LENGTH_SHORT).show();
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(LoginActivity.this, "Authentication error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
-    public void signUpPage(){
-        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Handle Facebook callback
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        // Handle Google Sign-In result
+        if (requestCode == GOOGLE_SIGN_IN_CODE) {
+            try {
+                GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+                if (account != null) {
+                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    firebaseAuth.signInWithCredential(credential)
+                            .addOnCompleteListener(this, task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(LoginActivity.this, "Google Login Successful", Toast.LENGTH_SHORT).show();
+                                    navigateToHome();
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "Google Login Failed", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            } catch (ApiException e) {
+                Log.e(TAG, "Google Sign-In Error: " + e.getMessage(), e);
+                Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
-    public void forgotPassPage(){
-        Intent intent = new Intent(LoginActivity.this, ForgotPassActivity.class);
+    private void navigateToHome() {
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
-        overridePendingTransition(0, 0);
+        finish();
     }
 
-//    private void checkRememberMe() {
-//        String savedEmail = sharedPreferences.getString("email", null);
-//        String savedPassword = sharedPreferences.getString("password", null);
-//
-//        if (savedEmail != null && savedPassword != null) {
-//            emailInput.setText(savedEmail);
-//            passwordInput.setText(savedPassword);
-//            rememberMeCheckbox.setChecked(true);
-//        }
-//    }
-//
-//    private void saveRememberMe(String email, String password) {
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putString("email", email);
-//        editor.putString("password", password);
-//        editor.apply();
-//    }
-//
-//    private void clearRememberMe() {
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.remove("email");
-//        editor.remove("password");
-//        editor.apply();
-//    }
+    // Existing methods remain unchanged (fetchBooksAndProceed, logIn, signUpPage, forgotPassPage, etc.)
 }

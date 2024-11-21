@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "816873376665",
+    "firebase_url": "https://mobdeve-93c80-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "mobdeve-93c80",
     "storage_bucket": "mobdeve-93c80.firebasestorage.app"
   },
@@ -12,7 +13,12 @@
           "package_name": "com.mobdeve.s12.bookwise"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "816873376665-7qubl8s3p03j0uml5vbesdsvpkps8ugp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAa58oZE5t9lkt-GEmj5ZLqqc4UcJTqoDc"
@@ -20,7 +26,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816873376665-7qubl8s3p03j0uml5vbesdsvpkps8ugp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
