@@ -206,7 +206,7 @@ public class UserSettingActivity extends AppCompatActivity {
     }
 
     public void addPage(){
-        Intent intent = new Intent(UserSettingActivity.this, AdvanceSearchActivity.class);
+        Intent intent = new Intent(UserSettingActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

@@ -17,7 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SearchActivity extends AppCompatActivity implements SearchActivityAdapter.OnCollectClickListener {
 
@@ -98,32 +100,20 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == ADVANCED_SEARCH_REQUEST && resultCode == RESULT_OK) {
-            // Retrieve the search query from the result
-            String query = data.getStringExtra("QUERY");
-            if (query != null && !query.isEmpty()) {
-                // Perform the search with the query
-                System.out.println(bookitemList);
-                searchBooks(query, bookitemList);
+            if (requestCode == ADVANCED_SEARCH_REQUEST && resultCode == RESULT_OK) {
+                // Retrieve the search query from the result
+                HashMap<String, String> searchFilters = (HashMap<String, String>) data.getSerializableExtra("SEARCH_FILTERS");
+                if (searchFilters != null && !searchFilters.isEmpty()) {
+                    // Perform the search with the query
+                    advanceSearchBooks(searchFilters, bookitemList);
+                }
             }
         }
-    }
 
-    /*public void onCollectClick(Bookitem item, boolean isCollected) {
-        if (isCollected) {
-            if (!collectionBookitemList.contains(item)) {
-                collectionBookitemList.add(item);
-            }
-        } else {
-            collectionBookitemList.remove(item);
-        }
-    }*/
-
-    //edit
     public void onCollectClick(Bookitem item, boolean isCollected, String userId) {
         if (isCollected) {
             // Add book to Firestore
@@ -202,6 +192,57 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
         }
     }
 
+    private void advanceSearchBooks(Map<String, String> searchFilters, List<Bookitem> bookitemList) {
+        filteredList.clear();
+
+        for (Bookitem book : bookitemList) {
+            boolean matches = true;
+
+            for (Map.Entry<String, String> filter : searchFilters.entrySet()) {
+                String key = filter.getKey();
+                String value = filter.getValue().toLowerCase();
+
+                // Match against corresponding Bookitem attributes
+                switch (key) {
+                    case "title":
+                        matches &= (book.getTitle() != null && book.getTitle().toLowerCase().contains(value));
+                        break;
+                    case "author":
+                        matches &= (book.getAuthor() != null && book.getAuthor().toLowerCase().contains(value));
+                        break;
+                    case "genre":
+                        matches &= (book.getGenres() != null && book.getGenres().toLowerCase().contains(value));
+                        break;
+                    case "publisher":
+                        matches &= (book.getAuthor() != null && book.getAuthor().toLowerCase().contains(value));
+                        break;
+                    case "language":
+                        matches &= (book.getTitle() != null && book.getTitle().toLowerCase().contains(value));
+                        break;
+                    case "publicationDate":
+                        matches &= (book.getDate() != null && book.getDate().toLowerCase().contains(value));
+                        break;
+                    default:
+                        matches = false; // Unknown filter key
+                }
+
+                // Break early if any filter doesn't match
+                if (!matches) break;
+            }
+
+            if (matches) {
+                filteredList.add(book);
+            }
+        }
+
+        activitySearchAdapter.notifyDataSetChanged();
+
+        if (filteredList.isEmpty()) {
+            Toast.makeText(this, "No books found matching the criteria", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     public void homePage() {
         Intent intent = new Intent(SearchActivity.this, HomeActivity.class);
         startActivity(intent);
@@ -215,7 +256,7 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
     }
 
     public void addPage() {
-        Intent intent = new Intent(SearchActivity.this, AdvanceSearchActivity.class);
+        Intent intent = new Intent(SearchActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

@@ -221,7 +221,7 @@ public class CollectionActivity extends AppCompatActivity implements HomeActivit
     }
 
     public void addPage(){
-        Intent intent = new Intent(CollectionActivity.this, AdvanceSearchActivity.class);
+        Intent intent = new Intent(CollectionActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

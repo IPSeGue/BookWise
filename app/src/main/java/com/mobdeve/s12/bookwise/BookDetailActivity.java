@@ -190,7 +190,7 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     public void addPage(){
-        Intent intent = new Intent(BookDetailActivity.this, AdvanceSearchActivity.class);
+        Intent intent = new Intent(BookDetailActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

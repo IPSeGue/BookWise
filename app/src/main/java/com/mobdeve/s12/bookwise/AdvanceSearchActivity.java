@@ -9,6 +9,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AdvanceSearchActivity extends AppCompatActivity {
 
     private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
@@ -35,31 +38,22 @@ public class AdvanceSearchActivity extends AppCompatActivity {
         btnGoal = findViewById(R.id.h_goal_btn);
 
         asSearch.setOnClickListener(v -> {
-            String title = etTitle.getText().toString().trim();
-            String author = etAuthor.getText().toString().trim();
-            String genre = etGenre.getText().toString().trim();
-            String publisher = etPublisher.getText().toString().trim();
-            String language = etLanguage.getText().toString().trim();
-            String publicationDate = etPublicationDate.getText().toString().trim();
+            Map<String, String> searchFilters = new HashMap<>();
+            // Collect search input
+            addFilter(searchFilters, "title", etTitle.getText().toString().trim());
+            addFilter(searchFilters, "author", etAuthor.getText().toString().trim());
+            addFilter(searchFilters, "genre", etGenre.getText().toString().trim());
+            addFilter(searchFilters, "publisher", etPublisher.getText().toString().trim());
+            addFilter(searchFilters, "language", etLanguage.getText().toString().trim());
+            addFilter(searchFilters, "publicationDate", etPublicationDate.getText().toString().trim());
 
-            // Build the query string
-            StringBuilder queryBuilder = new StringBuilder();
-            if (!title.isEmpty()) queryBuilder.append("+intitle:").append(title);
-            if (!author.isEmpty()) queryBuilder.append("+inauthor:").append(author);
-            if (!genre.isEmpty()) queryBuilder.append("+subject:").append(genre);
-            if (!publisher.isEmpty()) queryBuilder.append("+inpublisher:").append(publisher);
-            if (!language.isEmpty()) queryBuilder.append("+lang:").append(language);
-            if (!publicationDate.isEmpty()) queryBuilder.append("+inpublisher:").append(publicationDate);
-
-            String query = queryBuilder.toString();
-            if (query.isEmpty()) {
+            if (searchFilters.isEmpty()) {
                 Toast.makeText(this, "Please enter at least one filter!", Toast.LENGTH_SHORT).show();
             } else {
-                // Pass the query back to SearchActivity
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("QUERY", query);
+                resultIntent.putExtra("SEARCH_FILTERS", new HashMap<>(searchFilters));
                 setResult(RESULT_OK, resultIntent);
-                finish(); // Close AdvanceSearchActivity
+                finish();
             }
         });
 
@@ -68,6 +62,12 @@ public class AdvanceSearchActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
+    }
+
+    private void addFilter(Map<String, String> filters, String key, String value) {
+        if (!value.isEmpty()) {
+            filters.put(key, value);
+        }
     }
 
     public void homePage() {
@@ -83,7 +83,7 @@ public class AdvanceSearchActivity extends AppCompatActivity {
     }
 
     public void addPage() {
-        Intent intent = new Intent(AdvanceSearchActivity.this, AdvanceSearchActivity.class);
+        Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

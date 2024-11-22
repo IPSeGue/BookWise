@@ -169,7 +169,7 @@ public class GoalSettingActivity extends AppCompatActivity {
     }
 
     public void addPage(){
-        Intent intent = new Intent(GoalSettingActivity.this, AdvanceSearchActivity.class);
+        Intent intent = new Intent(GoalSettingActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
