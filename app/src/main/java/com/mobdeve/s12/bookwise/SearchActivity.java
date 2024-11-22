@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,22 +32,35 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
     private SearchActivityAdapter activitySearchAdapter;
     private List<Bookitem> bookitemList;
     private List<Bookitem> collectionBookitemList;
+    private List<Bookitem> filteredList;
 
     private GoogleBookAPI googleBookAPI;
+
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        userId = auth.getCurrentUser().getUid();
+
         // Initialize Views and RecyclerView
         initViews();
 
-        bookitemList = new ArrayList<>();
+        //bookitemList = new ArrayList<>(); //original
+        bookitemList = DataGeneratorBooks.getInstance().getBookList(); //edit
+        filteredList = new ArrayList<>();
         collectionBookitemList = new ArrayList<>();
 
+
         rv_search_item.setLayoutManager(new LinearLayoutManager(this));
-        activitySearchAdapter = new SearchActivityAdapter(bookitemList, this);
+        activitySearchAdapter = new SearchActivityAdapter(filteredList, this, userId);
         rv_search_item.setAdapter(activitySearchAdapter);
 
         // Initialize GoogleBookAPI instance
@@ -54,7 +70,7 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
         svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchBooks(query);
+                searchBooks(query, bookitemList);
                 return false;
             }
 
@@ -91,18 +107,50 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
             String query = data.getStringExtra("QUERY");
             if (query != null && !query.isEmpty()) {
                 // Perform the search with the query
-                searchBooks(query);
+                System.out.println(bookitemList);
+                searchBooks(query, bookitemList);
             }
         }
     }
 
-    public void onCollectClick(Bookitem item, boolean isCollected) {
+    /*public void onCollectClick(Bookitem item, boolean isCollected) {
         if (isCollected) {
             if (!collectionBookitemList.contains(item)) {
                 collectionBookitemList.add(item);
             }
         } else {
             collectionBookitemList.remove(item);
+        }
+    }*/
+
+    //edit
+    public void onCollectClick(Bookitem item, boolean isCollected, String userId) {
+        if (isCollected) {
+            // Add book to Firestore
+            db.collection("users").document(userId)
+                    .collection("bookCollection").document(item.getBookId()) // Ensure item has a unique ID
+                    .set(item)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(SearchActivity.this, "Book added to collection", Toast.LENGTH_SHORT).show();
+                        if (!collectionBookitemList.contains(item)) {
+                            collectionBookitemList.add(item);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(SearchActivity.this, "Failed to add book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            // Remove book from Firestore
+            db.collection("users").document(userId)
+                    .collection("bookCollection").document(item.getBookId())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(SearchActivity.this, "Book removed from collection", Toast.LENGTH_SHORT).show();
+                        collectionBookitemList.remove(item);
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(SearchActivity.this, "Failed to remove book: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         }
     }
 
@@ -117,7 +165,7 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
         as_Main = findViewById(R.id.as_main);
     }
 
-    private void searchBooks(String query) {
+    /*private void searchBooks(String query) {
         googleBookAPI.fetchBooks(query, new GoogleBookAPI.OnBooksFetchedListener() {
             @Override
             public void onBooksFetched(List<Bookitem> books) {
@@ -132,6 +180,26 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
                 Toast.makeText(SearchActivity.this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
+    }*/
+
+    //edit
+    private void searchBooks(String query, List<Bookitem> bookitemList) {
+        // Iterate through the bookitemList to find matches
+        filteredList.clear();
+        for (Bookitem book : bookitemList) {
+            if (book.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+                    book.getAuthor().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(book);
+            }
+        }
+
+        // Update the adapter with the filtered list
+        activitySearchAdapter.notifyDataSetChanged();
+
+        // Show a message if no results are found
+        if (filteredList.isEmpty()) {
+            Toast.makeText(SearchActivity.this, "No books found matching your query.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void homePage() {

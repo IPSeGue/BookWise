@@ -60,9 +60,13 @@
 
             <ToggleButton
                 android:id="@+id/si_collect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ToggleButton" />
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/off_book_mark"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textOff=" "
+                android:textOn=" " />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -4,15 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AdvanceSearchActivity extends AppCompatActivity {
 
+    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
     private EditText etTitle, etAuthor, etGenre, etPublisher, etLanguage, etPublicationDate;
     private Button asSearch;
-    private GoogleBookAPI googleBookAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,11 @@ public class AdvanceSearchActivity extends AppCompatActivity {
         etPublicationDate = findViewById(R.id.as_publishDay);
         asSearch = findViewById(R.id.as_search);
 
-        googleBookAPI = new GoogleBookAPI();
+        btnHome = findViewById(R.id.h_home_btn);
+        btnSearch = findViewById(R.id.h_search_btn);
+        btnAdd = findViewById(R.id.h_add_btn);
+        btnCollection = findViewById(R.id.h_collection_btn);
+        btnGoal = findViewById(R.id.h_goal_btn);
 
         asSearch.setOnClickListener(v -> {
             String title = etTitle.getText().toString().trim();
@@ -57,5 +62,41 @@ public class AdvanceSearchActivity extends AppCompatActivity {
                 finish(); // Close AdvanceSearchActivity
             }
         });
+
+        btnHome.setOnClickListener(v -> homePage());
+        btnSearch.setOnClickListener(v -> searchPage());
+        btnAdd.setOnClickListener(v -> addPage());
+        btnCollection.setOnClickListener(v -> collectionPage());
+        btnGoal.setOnClickListener(v -> goalPage());
+    }
+
+    public void homePage() {
+        Intent intent = new Intent(AdvanceSearchActivity.this, HomeActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    public void searchPage() {
+        Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    public void addPage() {
+        Intent intent = new Intent(AdvanceSearchActivity.this, AdvanceSearchActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    public void collectionPage() {
+        Intent intent = new Intent(AdvanceSearchActivity.this, CollectionActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    public void goalPage() {
+        Intent intent = new Intent(AdvanceSearchActivity.this, GoalSettingActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 }
