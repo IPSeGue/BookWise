@@ -66,7 +66,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/text_box"
                 android:ems="10"
-                android:hint="Sherlock Holmes"
+                android:hint="What is the Title?"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:padding="10dp" />
@@ -87,7 +87,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/text_box"
                 android:ems="10"
-                android:hint="Mystery"
+                android:hint="What is Its Genre?"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:padding="10dp" />
@@ -108,7 +108,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/text_box"
                 android:ems="10"
-                android:hint="Harpper &amp; Brothers Publishing Co."
+                android:hint="Who Published it?"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:padding="10dp" />
@@ -129,7 +129,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/text_box"
                 android:ems="10"
-                android:hint="2006"
+                android:hint="When was it Published?"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:padding="10dp" />
@@ -150,7 +150,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/text_box"
                 android:ems="10"
-                android:hint="English"
+                android:hint="What language is it?"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:padding="10dp" />
