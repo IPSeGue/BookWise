@@ -26,7 +26,7 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
     private static final String TAG = "SearchActivity";
     private static final int ADVANCED_SEARCH_REQUEST = 1; // Request code for advanced search
 
-    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal, as_Main;
+    private LinearLayout btnHome, btnSearch, btnCollection, btnGoal;
     private RecyclerView rv_search_item;
     private SearchView svSearch;
     private Button sAdvance;
@@ -35,8 +35,6 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
     private List<Bookitem> bookitemList;
     private List<Bookitem> collectionBookitemList;
     private List<Bookitem> filteredList;
-
-    private GoogleBookAPI googleBookAPI;
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -65,9 +63,6 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
         activitySearchAdapter = new SearchActivityAdapter(filteredList, this, userId);
         rv_search_item.setAdapter(activitySearchAdapter);
 
-        // Initialize GoogleBookAPI instance
-        googleBookAPI = new GoogleBookAPI();
-
         // Set up SearchView
         svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -86,7 +81,6 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
         // Navigation buttons
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
-        btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
 
@@ -147,32 +141,12 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
     public void initViews() {
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
-        btnAdd = findViewById(R.id.h_add_btn);
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
         rv_search_item = findViewById(R.id.rv_search_item);
-        svSearch = findViewById(R.id.search_view); // Ensure your layout has a SearchView with this ID
-        as_Main = findViewById(R.id.as_main);
+        svSearch = findViewById(R.id.search_view);
     }
 
-    /*private void searchBooks(String query) {
-        googleBookAPI.fetchBooks(query, new GoogleBookAPI.OnBooksFetchedListener() {
-            @Override
-            public void onBooksFetched(List<Bookitem> books) {
-                bookitemList.clear();
-                bookitemList.addAll(books);
-                activitySearchAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "Error fetching books: " + errorMessage);
-                Toast.makeText(SearchActivity.this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }*/
-
-    //edit
     private void searchBooks(String query, List<Bookitem> bookitemList) {
         // Iterate through the bookitemList to find matches
         filteredList.clear();
@@ -250,12 +224,6 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityA
     }
 
     public void searchPage() {
-        Intent intent = new Intent(SearchActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void addPage() {
         Intent intent = new Intent(SearchActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);

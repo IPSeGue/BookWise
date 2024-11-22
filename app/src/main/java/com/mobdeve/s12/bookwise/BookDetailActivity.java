@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookDetailActivity extends AppCompatActivity {
-    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
+    private LinearLayout btnHome, btnSearch, btnCollection, btnGoal;
     private Button btnSubmit;
     private RecyclerView rv_review_item;
 
@@ -62,7 +62,6 @@ public class BookDetailActivity extends AppCompatActivity {
         data();
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
-        btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
         btnSubmit.setOnClickListener(v -> submitReview());
@@ -71,7 +70,6 @@ public class BookDetailActivity extends AppCompatActivity {
     public void initViews(){
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
-        btnAdd = findViewById(R.id.h_add_btn);
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
         btnSubmit = findViewById(R.id.bd_submit);
@@ -184,12 +182,6 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     public void searchPage(){
-        Intent intent = new Intent(BookDetailActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void addPage(){
         Intent intent = new Intent(BookDetailActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);

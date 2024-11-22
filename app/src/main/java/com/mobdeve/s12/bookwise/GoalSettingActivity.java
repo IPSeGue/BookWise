@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class GoalSettingActivity extends AppCompatActivity {
 
-    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
+    private LinearLayout btnHome, btnSearch, btnCollection, btnGoal;
     private Button btnSaveGoal;
 
     private TextView fullName, email;
@@ -52,7 +52,6 @@ public class GoalSettingActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
-        btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
         btnSaveGoal.setOnClickListener(v -> saveGoals());
@@ -144,7 +143,6 @@ public class GoalSettingActivity extends AppCompatActivity {
     public void initViews(){
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
-        btnAdd = findViewById(R.id.h_add_btn);
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
         btnSaveGoal = findViewById(R.id.gs_saveGoal);
@@ -163,12 +161,6 @@ public class GoalSettingActivity extends AppCompatActivity {
     }
 
     public void searchPage(){
-        Intent intent = new Intent(GoalSettingActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void addPage(){
         Intent intent = new Intent(GoalSettingActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);

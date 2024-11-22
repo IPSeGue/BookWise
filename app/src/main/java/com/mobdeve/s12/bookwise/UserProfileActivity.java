@@ -25,7 +25,7 @@ import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
+    private LinearLayout btnHome, btnSearch, btnCollection, btnGoal;
     private Button btnGoalSetting, btnSetting, btnLogOut;
 
     private TextView fullName, email, bookRead, bookGoal, currentProgress;
@@ -50,7 +50,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
-        btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
         btnGoalSetting.setOnClickListener(v -> goalPage());
@@ -61,7 +60,6 @@ public class UserProfileActivity extends AppCompatActivity {
     public void initViews(){
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
-        btnAdd = findViewById(R.id.h_add_btn);
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
         btnGoalSetting = findViewById(R.id.up_setGoal);
@@ -121,12 +119,6 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     public void searchPage(){
-        Intent intent = new Intent(UserProfileActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void addPage(){
         Intent intent = new Intent(UserProfileActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);

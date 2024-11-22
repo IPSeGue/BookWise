@@ -28,7 +28,7 @@ import java.util.List;
 
 public class UserSettingActivity extends AppCompatActivity {
 
-    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
+    private LinearLayout btnHome, btnSearch, btnCollection, btnGoal;
     private Button btnSaveProfile;
 
     private TextView bookRead, bookGoal, currentProgress;
@@ -57,7 +57,6 @@ public class UserSettingActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
-        btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
         btnSaveProfile.setOnClickListener(v -> saveProfileChanges());
@@ -106,7 +105,6 @@ public class UserSettingActivity extends AppCompatActivity {
     public void initViews(){
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
-        btnAdd = findViewById(R.id.h_add_btn);
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
         btnSaveProfile = findViewById(R.id.us_saveProfile);
@@ -200,12 +198,6 @@ public class UserSettingActivity extends AppCompatActivity {
     }
 
     public void searchPage(){
-        Intent intent = new Intent(UserSettingActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void addPage(){
         Intent intent = new Intent(UserSettingActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);

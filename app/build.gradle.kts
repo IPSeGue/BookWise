@@ -57,7 +57,6 @@ dependencies {
     // Retrofit dependencies for API integration
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
-
     // For image loading with Glide
     implementation (libs.glide)
     implementation(libs.firebase.storage)

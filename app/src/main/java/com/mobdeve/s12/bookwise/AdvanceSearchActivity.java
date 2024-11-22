@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class AdvanceSearchActivity extends AppCompatActivity {
 
-    private LinearLayout btnHome, btnSearch, btnAdd, btnCollection, btnGoal;
+    private LinearLayout btnHome, btnSearch, btnCollection, btnGoal;
     private EditText etTitle, etAuthor, etGenre, etPublisher, etLanguage, etPublicationDate;
     private Button asSearch;
 
@@ -33,7 +33,6 @@ public class AdvanceSearchActivity extends AppCompatActivity {
 
         btnHome = findViewById(R.id.h_home_btn);
         btnSearch = findViewById(R.id.h_search_btn);
-        btnAdd = findViewById(R.id.h_add_btn);
         btnCollection = findViewById(R.id.h_collection_btn);
         btnGoal = findViewById(R.id.h_goal_btn);
 
@@ -59,7 +58,6 @@ public class AdvanceSearchActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
-        btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
     }
@@ -77,12 +75,6 @@ public class AdvanceSearchActivity extends AppCompatActivity {
     }
 
     public void searchPage() {
-        Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    public void addPage() {
         Intent intent = new Intent(AdvanceSearchActivity.this, SearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
