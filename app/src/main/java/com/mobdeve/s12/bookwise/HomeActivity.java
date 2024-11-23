@@ -63,6 +63,7 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
 
         btnHome.setOnClickListener(v -> homePage());
         btnSearch.setOnClickListener(v -> searchPage());
+        btnAdd.setOnClickListener(v -> addPage());
         btnCollection.setOnClickListener(v -> collectionPage());
         btnGoal.setOnClickListener(v -> goalPage());
         userProfile.setOnClickListener(v -> userProfilePage());
@@ -182,6 +183,12 @@ public class HomeActivity extends AppCompatActivity implements HomeActivityAdapt
 
     public void searchPage(){
         Intent intent = new Intent(HomeActivity.this, SearchActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    public void addPage(){
+        Intent intent = new Intent(HomeActivity.this, AdvanceSearchActivity.class);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
